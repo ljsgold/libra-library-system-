@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  libra-db:
+    image: mysql:8.0
+    container_name: libra-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: libra_bms
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - libra-db-data:/var/lib/mysql
+
+  libra-redis:
+    image: redis:6.2
+    container_name: libra-redis
+    ports:
+      - "6379:6379"
+
+  libra-app:
+    build: .
+    container_name: libra-app
+    depends_on:
+      - libra-db
+      - libra-redis
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://libra-db:3306/libra_bms?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATA_REDIS_HOST: libra-redis
+      JWT_SECRET: libra-bms-commercial-secret-key-must-be-long-enough
+
+volumes:
+  libra-db-data:
