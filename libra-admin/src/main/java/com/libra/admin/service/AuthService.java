@@ -46,7 +46,7 @@ public class AuthService {
         long count = userMapper.selectCount(new LambdaQueryWrapper<SysUser>()
                 .eq(SysUser::getUsername, dto.getUsername()));
         if (count > 0) {
-            throw new BusinessException("username already exists");
+            throw new BusinessException("用户名已存在");
         }
 
         SysUser user = new SysUser();
@@ -68,11 +68,11 @@ public class AuthService {
                 .eq(SysUser::getUsername, loginDTO.getUsername()));
 
         if (user == null || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
-            throw new BusinessException("invalid username or password");
+            throw new BusinessException("用户名或密码错误");
         }
 
         if (Objects.equals(user.getStatus(), 0)) {
-            throw new BusinessException("account disabled");
+            throw new BusinessException("账号已被禁用");
         }
 
         user.setLastLoginTime(LocalDateTime.now());
@@ -88,11 +88,11 @@ public class AuthService {
             TenantContext.setTenantId(user.getTenantId() != null ? user.getTenantId() : DEFAULT_TENANT_ID);
         }
         if (user == null) {
-            throw new BusinessException("user not found");
+            throw new BusinessException("用户不存在");
         }
         validateCode(loginCodes, dto.getUsername(), dto.getCode());
         if (Objects.equals(user.getStatus(), 0)) {
-            throw new BusinessException("account disabled");
+            throw new BusinessException("账号已被禁用");
         }
         user.setLastLoginTime(LocalDateTime.now());
         userMapper.updateById(user);
@@ -106,7 +106,7 @@ public class AuthService {
             TenantContext.setTenantId(user.getTenantId() != null ? user.getTenantId() : DEFAULT_TENANT_ID);
         }
         if (user == null) {
-            throw new BusinessException("user not found");
+            throw new BusinessException("用户不存在");
         }
         String code = generateCode();
         loginCodes.put(dto.getUsername(), new CodeCache(code, LocalDateTime.now().plusMinutes(CODE_EXPIRE_MINUTES)));
@@ -120,10 +120,10 @@ public class AuthService {
             TenantContext.setTenantId(user.getTenantId() != null ? user.getTenantId() : DEFAULT_TENANT_ID);
         }
         if (user == null) {
-            throw new BusinessException("user not found");
+            throw new BusinessException("用户不存在");
         }
         if (user.getEmail() != null && !user.getEmail().equalsIgnoreCase(dto.getEmail())) {
-            throw new BusinessException("email not match");
+            throw new BusinessException("邮箱不匹配");
         }
         String code = generateCode();
         resetCodes.put(dto.getUsername(), new CodeCache(code, LocalDateTime.now().plusMinutes(CODE_EXPIRE_MINUTES)));
@@ -137,10 +137,10 @@ public class AuthService {
             TenantContext.setTenantId(user.getTenantId() != null ? user.getTenantId() : DEFAULT_TENANT_ID);
         }
         if (user == null) {
-            throw new BusinessException("user not found");
+            throw new BusinessException("用户不存在");
         }
         if (user.getEmail() != null && !user.getEmail().equalsIgnoreCase(dto.getEmail())) {
-            throw new BusinessException("email not match");
+            throw new BusinessException("邮箱不匹配");
         }
         validateCode(resetCodes, dto.getUsername(), dto.getCode());
         user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
@@ -162,7 +162,7 @@ public class AuthService {
             tokens.put("refreshToken", newRefreshToken);
             return tokens;
         } catch (Exception e) {
-            throw new BusinessException(401, "token invalid or expired");
+            throw new BusinessException(401, "令牌无效或已过期");
         }
     }
 
@@ -179,7 +179,7 @@ public class AuthService {
     private void validateCode(Map<String, CodeCache> cache, String username, String code) {
         CodeCache stored = cache.get(username);
         if (stored == null || stored.expireAt.isBefore(LocalDateTime.now()) || !stored.code.equals(code)) {
-            throw new BusinessException("code invalid or expired");
+            throw new BusinessException("验证码无效或已过期");
         }
         cache.remove(username);
     }

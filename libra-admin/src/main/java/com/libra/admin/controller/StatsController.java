@@ -5,6 +5,8 @@ import com.libra.admin.entity.LibBorrowRecord;
 import com.libra.admin.mapper.LibBookMapper;
 import com.libra.admin.mapper.LibBorrowRecordMapper;
 import com.libra.common.core.domain.R;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/stats")
+@Tag(name = "统计", description = "统计相关接口")
 public class StatsController {
 
     @Autowired
@@ -24,6 +27,7 @@ public class StatsController {
     private LibBorrowRecordMapper borrowRecordMapper;
 
     @GetMapping("/dashboard")
+    @Operation(summary = "仪表盘统计")
     public R<Map<String, Object>> getDashboardStats() {
         Map<String, Object> stats = new HashMap<>();
         

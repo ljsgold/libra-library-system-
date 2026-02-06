@@ -51,7 +51,7 @@ public class UserPortalService {
     private Long requireUserId() {
         Long userId = SecurityUtils.getUserId();
         if (userId == null) {
-            throw new BusinessException(401, "Unauthorized");
+            throw new BusinessException(401, "未授权");
         }
         return userId;
     }
@@ -175,7 +175,7 @@ public class UserPortalService {
                 .eq(LibReservation::getBookId, bookId)
                 .in(LibReservation::getStatus, 0, 1));
         if (existing > 0) {
-            throw new BusinessException("Already reserved");
+            throw new BusinessException("已预约");
         }
         Long waitingCount = reservationMapper.selectCount(new LambdaQueryWrapper<LibReservation>()
                 .eq(LibReservation::getBookId, bookId)
@@ -245,10 +245,10 @@ public class UserPortalService {
         Long userId = requireUserId();
         LibBorrowRecord record = borrowRecordMapper.selectById(recordId);
         if (record == null || !Objects.equals(record.getUserId(), userId)) {
-            throw new BusinessException("Borrow record not found");
+            throw new BusinessException("借阅记录不存在");
         }
         if (record.getStatus() == null || record.getStatus() != 1) {
-            throw new BusinessException("Borrow record not renewable");
+            throw new BusinessException("借阅记录不可续借");
         }
         record.setDueTime(record.getDueTime().plusDays(30));
         borrowRecordMapper.updateById(record);
@@ -289,7 +289,8 @@ public class UserPortalService {
                 .orderByDesc(LibReservation::getCreateTime));
         if (records.isEmpty()) return new ArrayList<>();
         Set<Long> bookIds = records.stream().map(LibReservation::getBookId).collect(Collectors.toSet());
-        Map<Long, LibBook> bookMap = bookMapper.selectBatchIds(bookIds).stream()
+        List<LibBook> books = bookMapper.selectList(new LambdaQueryWrapper<LibBook>().in(LibBook::getId, bookIds));
+        Map<Long, LibBook> bookMap = books.stream()
                 .collect(Collectors.toMap(LibBook::getId, b -> b));
         List<ReservationRecordVO> result = new ArrayList<>();
         for (LibReservation r : records) {
@@ -317,7 +318,7 @@ public class UserPortalService {
         Long userId = requireUserId();
         LibReservation reservation = reservationMapper.selectById(id);
         if (reservation == null || !Objects.equals(reservation.getUserId(), userId)) {
-            throw new BusinessException("Reservation not found");
+            throw new BusinessException("预约记录不存在");
         }
         reservation.setStatus(2);
         reservationMapper.updateById(reservation);
@@ -327,7 +328,7 @@ public class UserPortalService {
         Long userId = requireUserId();
         LibReservation reservation = reservationMapper.selectById(id);
         if (reservation == null || !Objects.equals(reservation.getUserId(), userId)) {
-            throw new BusinessException("Reservation not found");
+            throw new BusinessException("预约记录不存在");
         }
         reservation.setNotified(1);
         reservationMapper.updateById(reservation);

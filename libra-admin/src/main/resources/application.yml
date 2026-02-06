@@ -35,6 +35,11 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
 
+springdoc:
+  packages-to-scan: com.libra.admin.controller
+  swagger-ui:
+    path: /swagger-ui.html
+
 jwt:
   secret: libra-bms-secret-key-libra-bms-secret-key-libra-bms
   expiration: 86400
