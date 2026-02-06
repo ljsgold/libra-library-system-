@@ -122,6 +122,20 @@ onMounted(() => {
   gap: 16px;
 }
 
+.profile-page :deep(.el-card) {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border-light);
+  border-radius: 20px;
+  transition: all 300ms ease;
+}
+
+.profile-page :deep(.el-card:hover) {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-lg);
+}
+
 .page-header {
   display: flex;
   flex-direction: column;
@@ -135,7 +149,7 @@ onMounted(() => {
 
 .page-subtitle {
   margin: 0;
-  color: var(--color-muted);
+  color: var(--color-text-secondary);
 }
 
 .card-header {
@@ -164,7 +178,7 @@ onMounted(() => {
   padding-left: 16px;
   margin: 0;
   font-size: 13px;
-  color: var(--color-muted);
+  color: var(--color-text-secondary);
   line-height: 1.6;
 }
 

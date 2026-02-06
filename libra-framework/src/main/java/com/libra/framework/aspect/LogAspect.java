@@ -7,7 +7,6 @@ import com.libra.common.core.annotation.Log;
 import com.libra.common.utils.ServletUtils;
 import com.libra.common.utils.TenantContext;
 import com.libra.framework.security.SecurityUtils;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -19,10 +18,13 @@ import java.time.LocalDateTime;
 @Aspect
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class LogAspect {
-
     private final SysLogMapper logMapper;
+
+    // Explicit constructor injection to avoid Lombok issues in some environments
+    public LogAspect(SysLogMapper logMapper) {
+        this.logMapper = logMapper;
+    }
 
     @Around("@annotation(auditLog)")
     public Object doAround(ProceedingJoinPoint joinPoint, Log auditLog) throws Throwable {

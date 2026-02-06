@@ -41,8 +41,8 @@ const error = ref(false)
 const days = ref<7 | 30>(7)
 const trendData = ref<BorrowTrendItem[]>([])
 
-const primary = '#8A5A3E'
-const secondary = '#2D1C14'
+const primary = '#007AFF'
+const secondary = '#1D1D1F'
 
 const initChart = () => {
   if (!chartRef.value) return
@@ -71,15 +71,15 @@ const initChart = () => {
       type: 'category',
       boundaryGap: false,
       data: xData,
-      axisLine: { lineStyle: { color: 'rgba(107, 63, 42, 0.3)' } },
+      axisLine: { lineStyle: { color: 'rgba(0, 0, 0, 0.1)' } },
       axisLabel: { color: '#71717A' }
     },
     yAxis: {
       type: 'value',
       name: '借阅量（册）',
-      axisLine: { lineStyle: { color: 'rgba(107, 63, 42, 0.3)' } },
+      axisLine: { lineStyle: { color: 'rgba(0, 0, 0, 0.1)' } },
       axisLabel: { color: '#71717A' },
-      splitLine: { lineStyle: { color: 'rgba(107, 63, 42, 0.08)' } }
+      splitLine: { lineStyle: { color: 'rgba(0, 0, 0, 0.06)' } }
     },
     series: [
       {
@@ -98,8 +98,8 @@ const initChart = () => {
         },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: 'rgba(138, 90, 62, 0.28)' },
-            { offset: 1, color: 'rgba(138, 90, 62, 0.02)' }
+            { offset: 0, color: 'rgba(0, 122, 255, 0.2)' },
+            { offset: 1, color: 'rgba(0, 122, 255, 0.02)' }
           ])
         }
       }
@@ -160,6 +160,16 @@ watch(
 .chart-card {
   height: 100%;
   border-radius: 18px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border-light);
+  transition: all 300ms ease;
+}
+
+.chart-card:hover {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-lg);
 }
 
 .card-header {
@@ -177,7 +187,7 @@ watch(
   display: block;
   margin-top: 4px;
   font-size: 12px;
-  color: var(--color-muted);
+  color: var(--color-text-secondary);
 }
 
 .chart-body {

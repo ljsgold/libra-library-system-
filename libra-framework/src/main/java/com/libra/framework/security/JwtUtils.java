@@ -7,13 +7,19 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+// Removed @PostConstruct due to environments where annotation not available
 import javax.crypto.SecretKey;
+import java.util.Base64;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.security.SecureRandom;
 
 @Component
 public class JwtUtils {
+
+    private static final int KEY_LENGTH = 32; // 256 bits
 
     @Value("${jwt.secret:libra-bms-secret-key-libra-bms-secret-key-libra-bms}")
     private String secret;
@@ -24,8 +30,29 @@ public class JwtUtils {
     @Value("${jwt.refreshExpiration:604800}")
     private long refreshExpiration;
 
+    private void ensureSecret() {
+        if (secret == null || secret.trim().isEmpty()) {
+            byte[] key = new byte[KEY_LENGTH];
+            new SecureRandom().nextBytes(key);
+            secret = Base64.getEncoder().encodeToString(key);
+        } else {
+            try {
+                Base64.getDecoder().decode(secret);
+            } catch (IllegalArgumentException ex) {
+                secret = Base64.getEncoder().encodeToString(secret.getBytes(StandardCharsets.UTF_8));
+            }
+        }
+    }
+
     private SecretKey getSecretKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
+        ensureSecret();
+        byte[] keyBytes;
+        try {
+            keyBytes = Base64.getDecoder().decode(secret);
+        } catch (Exception ex) {
+            keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+        }
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String createToken(Long userId, Long tenantId, String username) {

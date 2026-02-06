@@ -1,206 +1,117 @@
-# Design System Master File
+# Libra Library Design System - Apple Style
 
-> **LOGIC:** When building a specific page, first check `design-system/pages/[page-name].md`.
-> If that file exists, its rules **override** this Master file.
-> If not, strictly follow the rules below.
-
----
-
-**Project:** Libra Library
-**Generated:** 2026-02-06 05:19:27
-**Category:** Design System/Component Library
-
----
+> **Design Philosophy:** Minimal, Clean, Elegant - Inspired by Apple's Human Interface Guidelines
 
 ## Global Rules
 
-### Color Palette
+### Color Palette (Apple Style)
 
 | Role | Hex | CSS Variable |
 |------|-----|--------------|
-| Primary | `#6B3F2A` | `--color-primary` |
-| Secondary | `#C7A786` | `--color-secondary` |
-| CTA/Accent | `#8A5A3E` | `--color-cta` |
-| Background | `#F6EFE7` | `--color-background` |
-| Text | `#2D1C14` | `--color-text` |
-
-**Color Notes:** Walnut brown + warm copper accent
+| Primary | `#007AFF` | `--color-primary` |
+| Primary Light | `#5AC8FA` | `--color-primary-light` |
+| Secondary | `#86868B` | `--color-secondary` |
+| Success | `#34C759` | `--color-success` |
+| Warning | `#FF9500` | `--color-warning` |
+| Danger | `#FF3B30` | `--color-danger` |
+| Background | `#FFFFFF` | `--color-background` |
+| Background Secondary | `#F5F5F7` | `--color-background-secondary` |
+| Surface | `#FFFFFF` | `--color-surface` |
+| Text | `#1D1D1F` | `--color-text` |
+| Text Secondary | `#86868B` | `--color-text-secondary` |
+| Border | `rgba(0, 0, 0, 0.08)` | `--color-border` |
 
 ### Typography
 
-- **Heading Font:** Playfair Display
-- **Body Font:** Source Sans 3
-- **Mood:** warm, refined, editorial, timeless, grounded, premium
-- **Google Fonts:** [Playfair Display + Source Sans 3](https://fonts.google.com/share?selection.family=Playfair+Display:wght@500;600;700|Source+Sans+3:wght@300;400;500;600;700)
+- **Font Family:** Inter, -apple-system, BlinkMacSystemFont
+- **Google Fonts:** `https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap`
 
-**CSS Import:**
+#### Type Scale
+
+| Element | Size | Weight | Letter Spacing |
+|---------|------|--------|----------------|
+| H1 | 48px | 700 | -0.003em |
+| H2 | 32px | 600 | -0.02em |
+| H3 | 24px | 600 | -0.02em |
+| Body | 17px | 400 | -0.022em |
+| Small | 14px | 400 | 0 |
+| Caption | 12px | 500 | 0 |
+
+### Shadows
+
+| Level | Value |
+|-------|-------|
+| sm | `0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04)` |
+| md | `0 4px 6px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.06)` |
+| lg | `0 10px 20px rgba(0, 0, 0, 0.04), 0 6px 6px rgba(0, 0, 0, 0.05)` |
+| xl | `0 25px 50px rgba(0, 0, 0, 0.08), 0 12px 24px rgba(0, 0, 0, 0.06)` |
+
+### Border Radius
+
+| Size | Value |
+|------|-------|
+| Small | 8px |
+| Medium | 12px |
+| Large | 16px |
+| XL | 18px |
+| 2XL | 20px |
+| Full | 999px |
+
+## Animation Guidelines
+
+- **Duration:** 200-300ms for micro-interactions
+- **Easing:** `cubic-bezier(0.25, 0.1, 0.25, 1)` (Apple standard)
+- **Hover Transform:** `translateY(-4px)` for cards
+- **Accessibility:** Always respect `prefers-reduced-motion`
+
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 ```
 
-### Spacing Variables
-
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--space-xs` | `4px` / `0.25rem` | Tight gaps |
-| `--space-sm` | `8px` / `0.5rem` | Icon gaps, inline spacing |
-| `--space-md` | `16px` / `1rem` | Standard padding |
-| `--space-lg` | `24px` / `1.5rem` | Section padding |
-| `--space-xl` | `32px` / `2rem` | Large gaps |
-| `--space-2xl` | `48px` / `3rem` | Section margins |
-| `--space-3xl` | `64px` / `4rem` | Hero padding |
-
-### Shadow Depths
-
-| Level | Value | Usage |
-|-------|-------|-------|
-| `--shadow-sm` | `0 1px 2px rgba(0,0,0,0.05)` | Subtle lift |
-| `--shadow-md` | `0 4px 6px rgba(0,0,0,0.1)` | Cards, buttons |
-| `--shadow-lg` | `0 10px 15px rgba(0,0,0,0.1)` | Modals, dropdowns |
-| `--shadow-xl` | `0 20px 25px rgba(0,0,0,0.15)` | Hero images, featured cards |
-
----
-
-## Component Specs
-
-### Buttons
-
-```css
-/* Primary Button */
-.btn-primary {
-  background: #8A5A3E;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: all 200ms ease;
-  cursor: pointer;
-}
-
-.btn-primary:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
-/* Secondary Button */
-.btn-secondary {
-  background: transparent;
-  color: #6B3F2A;
-  border: 2px solid #6B3F2A;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: all 200ms ease;
-  cursor: pointer;
-}
-```
+## Component Specifications
 
 ### Cards
+- Border radius: 18px
+- Background: White with subtle shadow
+- Hover: Scale 1.01 + shadow-lg
+- Padding: 24px
 
-```css
-.card {
-  background: #FFFAF5;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: var(--shadow-md);
-  transition: all 200ms ease;
-  cursor: pointer;
-}
+### Buttons
+- Border radius: 12px
+- Primary: Apple Blue (#007AFF)
+- Height: 44-48px for main actions
+- Font weight: 600
+- Hover: Subtle lift + shadow
 
-.card:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
-}
-```
+### Input Fields
+- Border radius: 12px
+- Background: `#F5F5F7` (secondary)
+- Focus: White bg + blue ring
+- Padding: 12px 16px
 
-### Inputs
+### Tables
+- Header: Light gray background
+- Border: Subtle, light
+- Row hover: Slight background change
 
-```css
-.input {
-  padding: 12px 16px;
-  border: 1px solid #E2E8F0;
-  border-radius: 8px;
-  font-size: 16px;
-  transition: border-color 200ms ease;
-}
+## Accessibility
 
-.input:focus {
-  border-color: #6B3F2A;
-  outline: none;
-  box-shadow: 0 0 0 3px #6B3F2A20;
-}
-```
-
-### Modals
-
-```css
-.modal-overlay {
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-}
-
-.modal {
-  background: white;
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: var(--shadow-xl);
-  max-width: 500px;
-  width: 90%;
-}
-```
-
----
-
-## Style Guidelines
-
-**Style:** Wood-toned minimalism
-
-**Keywords:** walnut brown, copper accent, parchment background, editorial typography, refined spacing
-
-**Best For:** Fashion, architecture, portfolios, agency landing pages, luxury brands, editorial
-
-**Key Effects:** font-size: clamp(3rem 10vw 12rem), font-weight: 900, letter-spacing: -0.05em, massive whitespace
-
-### Page Pattern
-
-**Pattern Name:** App Store Style Landing
-
-- **Conversion Strategy:** Show real screenshots. Include ratings (4.5+ stars). QR code for mobile. Platform-specific CTAs.
-- **CTA Placement:** Download buttons prominent (App Store + Play Store) throughout
-- **Section Order:** 1. Hero with device mockup, 2. Screenshots carousel, 3. Features with icons, 4. Reviews/ratings, 5. Download CTAs
-
----
-
-## Anti-Patterns (Do NOT Use)
-
-- �?Poor documentation
-- �?No live preview
-
-### Additional Forbidden Patterns
-
-- �?**Emojis as icons** �?Use SVG icons (Heroicons, Lucide, Simple Icons)
-- �?**Missing cursor:pointer** �?All clickable elements must have cursor:pointer
-- �?**Layout-shifting hovers** �?Avoid scale transforms that shift layout
-- �?**Low contrast text** �?Maintain 4.5:1 minimum contrast ratio
-- �?**Instant state changes** �?Always use transitions (150-300ms)
-- �?**Invisible focus states** �?Focus states must be visible for a11y
-
----
+- WCAG AAA compliance for text contrast
+- Minimum 4.5:1 contrast ratio
+- Clear focus states (4px blue ring)
+- Keyboard navigation support
 
 ## Pre-Delivery Checklist
 
-Before delivering any UI code, verify:
-
-- [ ] No emojis used as icons (use SVG instead)
-- [ ] All icons from consistent icon set (Heroicons/Lucide)
-- [ ] `cursor-pointer` on all clickable elements
-- [ ] Hover states with smooth transitions (150-300ms)
+- [ ] No emojis as icons (use SVG: Heroicons/Lucide)
+- [ ] cursor-pointer on all clickable elements
+- [ ] Hover states with smooth transitions (200-300ms)
 - [ ] Light mode: text contrast 4.5:1 minimum
-- [ ] Focus states visible for keyboard navigation
-- [ ] `prefers-reduced-motion` respected
+- [ ] Focus states visible for keyboard nav
+- [ ] prefers-reduced-motion respected
 - [ ] Responsive: 375px, 768px, 1024px, 1440px
-- [ ] No content hidden behind fixed navbars
-- [ ] No horizontal scroll on mobile
-
-
-

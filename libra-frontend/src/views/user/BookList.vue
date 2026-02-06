@@ -243,6 +243,40 @@ onMounted(() => {
   gap: 16px;
 }
 
+.book-list-page :deep(.el-card) {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border-light);
+  border-radius: 20px;
+  transition: all 300ms ease;
+}
+
+.book-list-page :deep(.el-card:hover) {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-lg);
+}
+
+.book-list-page :deep(.el-input__wrapper) {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--color-border-light);
+  transition: all 200ms ease;
+}
+
+.book-list-page :deep(.el-input__wrapper:hover) {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: var(--color-primary);
+}
+
+.book-list-page :deep(.el-input__wrapper.is-focus) {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+}
+
 .page-header {
   display: flex;
   flex-direction: column;
@@ -256,7 +290,7 @@ onMounted(() => {
 
 .page-subtitle {
   margin: 0;
-  color: var(--color-muted);
+  color: var(--color-text-secondary);
 }
 
 .card-header {
@@ -274,7 +308,7 @@ onMounted(() => {
   display: block;
   margin-top: 4px;
   font-size: 12px;
-  color: var(--color-muted);
+  color: var(--color-text-secondary);
 }
 
 .filter-bar {
@@ -303,7 +337,7 @@ onMounted(() => {
 
 .helper-title {
   font-size: 12px;
-  color: var(--color-muted);
+  color: var(--color-text-secondary);
 }
 
 .chips {

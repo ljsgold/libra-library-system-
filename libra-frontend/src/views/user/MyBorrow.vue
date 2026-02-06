@@ -273,6 +273,20 @@ onMounted(() => {
   gap: 16px;
 }
 
+.borrow-page :deep(.el-card) {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border-light);
+  border-radius: 20px;
+  transition: all 300ms ease;
+}
+
+.borrow-page :deep(.el-card:hover) {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-lg);
+}
+
 .page-header {
   display: flex;
   flex-direction: column;
@@ -286,7 +300,7 @@ onMounted(() => {
 
 .page-subtitle {
   margin: 0;
-  color: var(--color-muted);
+  color: var(--color-text-secondary);
 }
 
 .card-header {
@@ -304,7 +318,7 @@ onMounted(() => {
   display: block;
   margin-top: 4px;
   font-size: 12px;
-  color: var(--color-muted);
+  color: var(--color-text-secondary);
 }
 
 .table-loading,

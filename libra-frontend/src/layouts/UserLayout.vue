@@ -2,7 +2,7 @@
   <div class="user-layout">
     <header class="user-header surface">
       <div class="brand" @click="goHome">
-        <span class="brand-title">Libra 读者端</span>
+        <span class="brand-title">Libra</span>
         <span class="brand-subtitle">图书借阅平台</span>
       </div>
       <nav class="nav">
@@ -23,7 +23,7 @@
         <el-button v-if="isAdmin" size="small" type="primary" plain @click="goAdmin">管理后台</el-button>
         <el-dropdown @command="handleCommand">
           <div class="user-trigger">
-            <el-avatar size="small">{{ avatarText }}</el-avatar>
+            <div class="avatar">{{ avatarText }}</div>
             <div class="user-meta">
               <div class="user-name">{{ displayName }}</div>
               <div v-if="identityText" class="user-id">{{ identityText }}</div>
@@ -97,33 +97,44 @@ onMounted(() => {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 24px;
+  background: var(--color-background-secondary);
 }
 
 .user-header {
+  position: sticky;
+  top: 16px;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
-  border-radius: 18px;
-  gap: 16px;
+  padding: 12px 24px;
+  margin: 16px 24px 0;
+  gap: 24px;
 }
 
 .brand {
   display: flex;
   flex-direction: column;
   cursor: pointer;
+  transition: opacity 200ms ease;
+}
+
+.brand:hover {
+  opacity: 0.7;
 }
 
 .brand-title {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
 }
 
 .brand-subtitle {
   font-size: 11px;
-  color: var(--color-muted);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
 }
 
 .nav {
@@ -138,27 +149,59 @@ onMounted(() => {
 }
 
 .nav :deep(.el-menu-item) {
-  border-radius: 999px;
+  border-radius: 8px;
   margin: 0 4px;
+  padding: 0 16px;
+  height: 36px;
+  line-height: 36px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  border-bottom: none !important;
+  transition: all 200ms ease;
+}
+
+.nav :deep(.el-menu-item:hover) {
+  background: var(--color-background-secondary);
   color: var(--color-text);
 }
 
 .nav :deep(.el-menu-item.is-active) {
-  background: rgba(138, 90, 62, 0.12);
-  color: var(--color-cta);
+  background: var(--color-text);
+  color: var(--color-surface) !important;
 }
 
 .user-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .user-trigger {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 12px;
+  transition: background 200ms ease;
+}
+
+.user-trigger:hover {
+  background: var(--color-background-secondary);
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), #5AC8FA);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
 }
 
 .user-meta {
@@ -168,35 +211,50 @@ onMounted(() => {
 }
 
 .user-name {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--color-text);
 }
 
 .user-id {
   font-size: 11px;
-  color: var(--color-muted);
+  color: var(--color-text-secondary);
 }
 
 .user-main {
   flex: 1;
+  padding: 24px;
 }
 
 @media (max-width: 900px) {
   .user-header {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    margin: 12px 12px 0;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .brand {
+    align-items: center;
   }
 
   .nav {
     width: 100%;
-    justify-content: flex-start;
+    justify-content: center;
+  }
+
+  .nav :deep(.el-menu-item) {
+    padding: 0 12px;
+    font-size: 14px;
   }
 
   .user-actions {
-    width: 100%;
-    justify-content: flex-end;
+    justify-content: center;
+  }
+
+  .user-main {
+    padding: 16px 12px;
   }
 }
 </style>
-

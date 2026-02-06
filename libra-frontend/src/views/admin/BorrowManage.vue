@@ -43,17 +43,17 @@
           <el-table-column prop="recordId" label="记录ID" width="110" />
           <el-table-column prop="userName" label="读者" min-width="120" />
           <el-table-column prop="bookTitle" label="图书" min-width="180" show-overflow-tooltip />
-          <el-table-column label="借出日期" width="120">
+          <el-table-column label="借出日期" width="170">
             <template #default="scope">
               {{ formatDate(scope.row.borrowTime) }}
             </template>
           </el-table-column>
-          <el-table-column label="应还日期" width="120">
+          <el-table-column label="应还日期" width="170">
             <template #default="scope">
               {{ formatDate(scope.row.dueTime) }}
             </template>
           </el-table-column>
-          <el-table-column label="归还日期" width="120">
+          <el-table-column label="归还日期" width="170">
             <template #default="scope">
               {{ formatDate(scope.row.returnTime) }}
             </template>
@@ -106,7 +106,8 @@ const resetFilter = () => {
 
 const formatDate = (value?: string) => {
   if (!value) return '--'
-  return value.slice(0, 10)
+  // 保留完整时间，格式：2026-02-06 14:30:45
+  return value.slice(0, 19).replace('T', ' ')
 }
 
 const statusText = (status?: number) => {
@@ -151,6 +152,20 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.borrow-manage-page :deep(.el-card) {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border-light);
+  border-radius: 20px;
+  transition: all 300ms ease;
+}
+
+.borrow-manage-page :deep(.el-card:hover) {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-lg);
 }
 
 .page-header {

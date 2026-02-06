@@ -80,6 +80,16 @@ onMounted(() => {
 .list-card {
   height: 100%;
   border-radius: 18px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border-light);
+  transition: all 300ms ease;
+}
+
+.list-card:hover {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-lg);
 }
 
 .card-header {
@@ -97,7 +107,7 @@ onMounted(() => {
   display: block;
   margin-top: 4px;
   font-size: 12px;
-  color: var(--color-muted);
+  color: var(--color-text-secondary);
 }
 
 .list-table {
@@ -105,7 +115,7 @@ onMounted(() => {
 }
 
 .table-header-row {
-  background-color: rgba(107, 63, 42, 0.04) !important;
+  background-color: var(--color-background-secondary) !important;
 }
 
 .list-loading,

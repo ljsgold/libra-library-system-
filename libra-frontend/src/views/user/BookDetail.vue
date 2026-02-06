@@ -169,6 +169,40 @@ onMounted(() => {
   gap: 16px;
 }
 
+.detail-page :deep(.el-card) {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border-light);
+  border-radius: 20px;
+  transition: all 300ms ease;
+}
+
+.detail-page :deep(.el-card:hover) {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-lg);
+}
+
+.detail-page :deep(.el-input__wrapper) {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--color-border-light);
+  transition: all 200ms ease;
+}
+
+.detail-page :deep(.el-input__wrapper:hover) {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: var(--color-primary);
+}
+
+.detail-page :deep(.el-input__wrapper.is-focus) {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+}
+
 .page-header {
   display: flex;
   flex-direction: column;
@@ -182,7 +216,7 @@ onMounted(() => {
 
 .page-subtitle {
   margin: 0;
-  color: var(--color-muted);
+  color: var(--color-text-secondary);
 }
 
 .card-header {
@@ -213,8 +247,8 @@ onMounted(() => {
   border-radius: 12px;
   background-size: cover;
   background-position: center;
-  background-color: rgba(107, 63, 42, 0.08);
-  border: 1px solid rgba(107, 63, 42, 0.12);
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border-light);
 }
 
 .info {
@@ -233,7 +267,7 @@ onMounted(() => {
   flex-wrap: wrap;
   gap: 12px;
   font-size: 13px;
-  color: var(--color-muted);
+  color: var(--color-text-secondary);
 }
 
 .status {
@@ -269,7 +303,7 @@ onMounted(() => {
 .desc {
   margin: 0;
   font-size: 13px;
-  color: var(--color-muted);
+  color: var(--color-text-secondary);
   line-height: 1.6;
 }
 
@@ -277,7 +311,7 @@ onMounted(() => {
   padding-left: 18px;
   margin: 0;
   font-size: 13px;
-  color: var(--color-muted);
+  color: var(--color-text-secondary);
   line-height: 1.6;
 }
 

@@ -1,17 +1,19 @@
 package com.libra.framework.oss;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 
+import java.util.Map;
+import java.util.HashMap;
+
 @Component
-@RequiredArgsConstructor
 public class OssContext {
 
-    private final Map<String, OssStrategy> strategies;
+    @Autowired
+    private Map<String, OssStrategy> strategies;
 
     public OssStrategy getStrategy(String type) {
-        return strategies.get(type);
+        return strategies != null ? strategies.get(type) : null;
     }
 }

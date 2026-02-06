@@ -12,6 +12,11 @@ services:
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
       - libra-db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
 
   libra-redis:
     image: redis:6.2
@@ -30,7 +35,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://libra-db:3306/libra_bms?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATA_REDIS_HOST: libra-redis
-      JWT_SECRET: libra-bms-commercial-secret-key-must-be-long-enough
+      JWT_SECRET: ${JWT_SECRET}
 
 volumes:
   libra-db-data:

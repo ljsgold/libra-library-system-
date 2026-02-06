@@ -83,6 +83,16 @@ const handleClick = (action: QuickAction) => {
 .quick-card {
   height: 100%;
   border-radius: 18px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border-light);
+  transition: all 300ms ease;
+}
+
+.quick-card:hover {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-lg);
 }
 
 .card-header {
@@ -100,7 +110,7 @@ const handleClick = (action: QuickAction) => {
   display: block;
   margin-top: 4px;
   font-size: 12px;
-  color: var(--color-muted);
+  color: var(--color-text-secondary);
 }
 
 .quick-item {
@@ -109,14 +119,14 @@ const handleClick = (action: QuickAction) => {
   padding: 12px 14px;
   margin-bottom: 10px;
   border-radius: 14px;
-  background-color: rgba(107, 63, 42, 0.04);
+  background-color: var(--color-background-secondary);
   cursor: pointer;
-  border: 1px solid rgba(107, 63, 42, 0.12);
+  border: 1px solid var(--color-border-light);
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .quick-item:hover {
-  border-color: rgba(138, 90, 62, 0.4);
+  border-color: var(--color-primary);
   box-shadow: var(--shadow-md);
 }
 
@@ -127,8 +137,8 @@ const handleClick = (action: QuickAction) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(138, 90, 62, 0.12);
-  color: var(--color-cta);
+  background: rgba(0, 122, 255, 0.1);
+  color: var(--color-primary);
   margin-right: 10px;
 }
 
@@ -150,7 +160,7 @@ const handleClick = (action: QuickAction) => {
 .quick-desc {
   margin-top: 2px;
   font-size: 12px;
-  color: var(--color-muted);
+  color: var(--color-text-secondary);
 }
 
 @media (prefers-reduced-motion: reduce) {

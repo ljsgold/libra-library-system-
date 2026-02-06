@@ -25,7 +25,7 @@
 
       <section class="auth-card">
         <div class="brand brand-compact" @click="goHome">
-          <div class="brand-title">Libra 读者端</div>
+          <div class="brand-title">Libra</div>
           <div class="brand-subtitle">图书馆读者服务</div>
         </div>
 
@@ -200,7 +200,7 @@ const goForgot = () => router.push({ path: '/forgot-password', query: { username
 }
 
 .auth-tabs :deep(.el-tabs__active-bar) {
-  background: var(--color-cta);
+  background: var(--color-primary);
 }
 
 .code-row {

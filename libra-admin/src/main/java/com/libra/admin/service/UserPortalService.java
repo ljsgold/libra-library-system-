@@ -215,8 +215,9 @@ public class UserPortalService {
     private List<BorrowRecordVO> buildBorrowVO(List<LibBorrowRecord> records, boolean current) {
         if (records.isEmpty()) return new ArrayList<>();
         Set<Long> bookIds = records.stream().map(LibBorrowRecord::getBookId).collect(Collectors.toSet());
-        Map<Long, LibBook> bookMap = bookMapper.selectBatchIds(bookIds).stream()
-                .collect(Collectors.toMap(LibBook::getId, b -> b));
+        // Use in-query to fetch books by id and build a map for quick lookup
+        List<LibBook> books = bookMapper.selectList(new LambdaQueryWrapper<LibBook>().in(LibBook::getId, bookIds));
+        Map<Long, LibBook> bookMap = books.stream().collect(Collectors.toMap(LibBook::getId, b -> b));
         List<BorrowRecordVO> result = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
         for (LibBorrowRecord r : records) {
