@@ -212,6 +212,12 @@ const goForgot = () => router.push({ path: '/forgot-password', query: { username
   flex: 1;
 }
 
+.code-row :deep(.el-button) {
+  flex-shrink: 0;
+  white-space: nowrap;
+  min-width: 112px;
+}
+
 .form-actions {
   display: flex;
   justify-content: space-between;
