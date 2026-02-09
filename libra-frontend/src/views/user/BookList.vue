@@ -175,7 +175,7 @@ const query = reactive({
   keyword: (route.query.keyword as string) || '',
   categoryId: route.query.categoryId ? Number(route.query.categoryId) : undefined,
   sort: (route.query.sort as string) || 'latest',
-  onlyAvailable: route.query.onlyAvailable === 'true' || route.query.onlyAvailable === true,
+  onlyAvailable: route.query.onlyAvailable === 'true',
   page: route.query.page ? Number(route.query.page) : 1,
   size: 10
 })
@@ -262,7 +262,7 @@ watch(
     query.keyword = (route.query.keyword as string) || ''
     query.categoryId = route.query.categoryId ? Number(route.query.categoryId) : undefined
     query.sort = (route.query.sort as string) || 'latest'
-    query.onlyAvailable = route.query.onlyAvailable === 'true' || route.query.onlyAvailable === true
+    query.onlyAvailable = route.query.onlyAvailable === 'true'
     query.page = route.query.page ? Number(route.query.page) : 1
     fetchData()
   },
