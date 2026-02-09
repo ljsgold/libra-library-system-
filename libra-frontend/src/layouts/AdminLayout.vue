@@ -10,15 +10,15 @@
       </div>
       <el-menu class="menu" :default-active="activePath" router>
         <el-menu-item index="/admin/dashboard">
-          <span class="menu-icon">📊</span>
+          <el-icon class="menu-icon"><DataAnalysis /></el-icon>
           <span>仪表盘</span>
         </el-menu-item>
         <el-menu-item index="/admin/books">
-          <span class="menu-icon">📚</span>
+          <el-icon class="menu-icon"><Collection /></el-icon>
           <span>图书管理</span>
         </el-menu-item>
         <el-menu-item index="/admin/borrows">
-          <span class="menu-icon">📝</span>
+          <el-icon class="menu-icon"><Tickets /></el-icon>
           <span>借阅管理</span>
         </el-menu-item>
       </el-menu>
@@ -65,6 +65,7 @@
 import { computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/store/user'
+import { Collection, DataAnalysis, Tickets } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -108,19 +109,19 @@ onMounted(() => {
 .admin-layout {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 260px 1fr;
-  background: var(--color-background-secondary);
+  grid-template-columns: 280px 1fr;
+  background: var(--color-background);
 }
 
 .sidebar {
   position: sticky;
   top: 0;
   height: 100vh;
-  padding: 24px 16px;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-right: 1px solid var(--color-border-light);
+  padding: 32px 20px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-right: 1px solid rgba(0,0,0,0.05);
   display: flex;
   flex-direction: column;
 }
@@ -128,41 +129,51 @@ onMounted(() => {
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
+  gap: 16px;
+  padding: 12px;
   cursor: pointer;
-  border-radius: 12px;
-  transition: background 200ms ease;
-  margin-bottom: 32px;
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  margin-bottom: 40px;
 }
 
 .brand:hover {
-  background: var(--color-background-secondary);
+  background: rgba(0,0,0,0.03);
+  transform: scale(1.02);
 }
 
 .brand-logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--color-primary), #5AC8FA);
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #007AFF, #5856D6);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-weight: 700;
-  font-size: 20px;
+  font-weight: 800;
+  font-size: 24px;
+  box-shadow: 0 8px 16px rgba(0, 122, 255, 0.3);
+}
+
+.brand-info {
+  display: flex;
+  flex-direction: column;
 }
 
 .brand-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--color-text);
+  font-size: 20px;
+  font-weight: 800;
+  color: #1d1d1f;
   letter-spacing: -0.02em;
 }
 
 .brand-subtitle {
-  font-size: 11px;
-  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  color: #86868b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   margin-top: 2px;
 }
 
@@ -170,6 +181,9 @@ onMounted(() => {
   flex: 1;
   border-right: none;
   background: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .menu :deep(.el-menu) {
@@ -178,60 +192,69 @@ onMounted(() => {
 }
 
 .menu :deep(.el-menu-item) {
-  height: 44px;
-  line-height: 44px;
-  border-radius: 10px;
+  height: 52px;
+  line-height: 52px;
+  border-radius: 16px;
   margin-bottom: 4px;
-  color: var(--color-text-secondary);
-  font-weight: 500;
-  transition: all 200ms ease;
+  color: #86868b;
+  font-weight: 600;
+  font-size: 15px;
+  padding-left: 16px !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .menu :deep(.el-menu-item:hover) {
-  background: var(--color-background-secondary);
-  color: var(--color-text);
+  background: rgba(0,0,0,0.03);
+  color: #1d1d1f;
+  transform: translateX(4px);
 }
 
 .menu :deep(.el-menu-item.is-active) {
-  background: var(--color-text);
+  background: #1d1d1f;
   color: #FFFFFF;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 
 .menu-icon {
-  margin-right: 10px;
-  font-size: 16px;
+  margin-right: 12px;
+  font-size: 18px;
 }
 
 .sidebar-footer {
-  padding-top: 16px;
-  border-top: 1px solid var(--color-border);
+  padding-top: 24px;
+  border-top: 1px solid rgba(0,0,0,0.05);
 }
 
 .user-card {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
-  border-radius: 12px;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 16px;
   cursor: pointer;
-  transition: background 200ms ease;
+  transition: all 0.3s ease;
+  background: rgba(255,255,255,0.5);
+  border: 1px solid rgba(0,0,0,0.05);
 }
 
 .user-card:hover {
-  background: var(--color-background-secondary);
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  transform: translateY(-2px);
 }
 
 .avatar {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-primary), #5AC8FA);
+  background: linear-gradient(135deg, #FF9500, #FF3B30);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: 16px;
+  box-shadow: 0 4px 12px rgba(255, 149, 0, 0.3);
 }
 
 .user-info {
@@ -239,14 +262,15 @@ onMounted(() => {
 }
 
 .user-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 700;
+  color: #1d1d1f;
 }
 
 .user-role {
-  font-size: 11px;
-  color: var(--color-text-secondary);
+  font-size: 12px;
+  color: #86868b;
+  font-weight: 500;
 }
 
 .main {
@@ -262,17 +286,17 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 32px;
+  padding: 24px 40px;
   background: rgba(245, 245, 247, 0.8);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--color-border-light);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
 .topbar-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--color-text);
+  font-size: 28px;
+  font-weight: 800;
+  color: #1d1d1f;
   margin: 0;
   letter-spacing: -0.02em;
 }
@@ -280,17 +304,21 @@ onMounted(() => {
 .topbar-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .content {
   flex: 1;
-  padding: 32px;
+  padding: 40px;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 @media (max-width: 992px) {
   .admin-layout {
-    grid-template-columns: 220px 1fr;
+    grid-template-columns: 240px 1fr;
   }
 }
 
@@ -304,11 +332,11 @@ onMounted(() => {
   }
 
   .topbar {
-    padding: 16px;
+    padding: 16px 24px;
   }
 
   .content {
-    padding: 16px;
+    padding: 24px;
   }
 }
 </style>

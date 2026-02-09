@@ -42,8 +42,17 @@
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" width="100" align="center">
+              <el-table-column label="操作" width="140" align="center">
                 <template #default="scope">
+                  <el-button
+                    type="primary"
+                    link
+                    size="small"
+                    :loading="returningId === scope.row.id"
+                    @click="handleReturn(scope.row.id)"
+                  >
+                    归还
+                  </el-button>
                   <el-button
                     v-if="scope.row.renewable"
                     type="primary"
@@ -149,7 +158,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import type { BorrowRecord, ReservationRecord } from '@/api/user'
-import { getCurrentBorrowList, getHistoryBorrowList, renewBorrow, getReservationList, cancelReservation, subscribeArrival } from '@/api/user'
+import { getCurrentBorrowList, getHistoryBorrowList, renewBorrow, returnBorrow, getReservationList, cancelReservation, subscribeArrival } from '@/api/user'
 import { ElMessage } from 'element-plus'
 
 const activeTab = ref<'current' | 'history' | 'reservation'>('current')
@@ -161,9 +170,10 @@ const reservationList = ref<ReservationRecord[]>([])
 const loadingCurrent = ref(false)
 const loadingHistory = ref(false)
 const loadingReservation = ref(false)
-const renewingId = ref<number | null>(null)
-const cancellingId = ref<number | null>(null)
-const subscribingId = ref<number | null>(null)
+const renewingId = ref<string | null>(null)
+const returningId = ref<string | null>(null)
+const cancellingId = ref<string | null>(null)
+const subscribingId = ref<string | null>(null)
 
 const fetchCurrent = async () => {
   loadingCurrent.value = true
@@ -198,7 +208,7 @@ const fetchReservation = async () => {
   }
 }
 
-const handleRenew = async (id: number) => {
+const handleRenew = async (id: string) => {
   renewingId.value = id
   try {
     await renewBorrow(id)
@@ -211,7 +221,22 @@ const handleRenew = async (id: number) => {
   }
 }
 
-const handleCancel = async (id: number) => {
+const handleReturn = async (id: string) => {
+  returningId.value = id
+  try {
+    await returnBorrow(id)
+    ElMessage.success('归还成功')
+    fetchCurrent()
+    if (historyList.value.length) {
+      fetchHistory()
+    }
+  } catch (e) {
+  } finally {
+    returningId.value = null
+  }
+}
+
+const handleCancel = async (id: string) => {
   cancellingId.value = id
   try {
     await cancelReservation(id)
@@ -224,7 +249,7 @@ const handleCancel = async (id: number) => {
   }
 }
 
-const handleSubscribe = async (id: number) => {
+const handleSubscribe = async (id: string) => {
   subscribingId.value = id
   try {
     await subscribeArrival(id)
@@ -266,41 +291,57 @@ onMounted(() => {
 
 <style scoped>
 .borrow-page {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 32px;
 }
 
 .borrow-page :deep(.el-card) {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: var(--color-surface);
   border: 1px solid var(--color-border-light);
-  border-radius: 20px;
-  transition: all 300ms ease;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 200ms ease, transform 200ms ease;
 }
 
 .borrow-page :deep(.el-card:hover) {
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  padding: 0 12px;
+}
+
+.eyebrow {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+  display: inline-block;
 }
 
 .page-title {
-  margin: 8px 0 0;
-  font-size: clamp(24px, 2.6vw, 32px);
+  margin: 0;
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--color-text);
 }
 
 .page-subtitle {
   margin: 0;
+  font-size: 17px;
   color: var(--color-text-secondary);
+  max-width: 600px;
+  line-height: 1.5;
 }
 
 .card-header {
@@ -310,32 +351,90 @@ onMounted(() => {
 }
 
 .card-title {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-title::before {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 18px;
+  background: var(--color-primary);
+  border-radius: 2px;
 }
 
 .card-subtitle {
   display: block;
   margin-top: 4px;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.borrow-page :deep(.el-tabs__nav-wrap::after) {
+  background-color: rgba(0,0,0,0.05);
+  height: 1px;
+}
+
+.borrow-page :deep(.el-tabs__item) {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  height: 48px;
+  transition: all 0.3s ease;
+}
+
+.borrow-page :deep(.el-tabs__item.is-active) {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.borrow-page :deep(.el-tabs__active-bar) {
+  background-color: var(--color-primary);
+  height: 3px;
+  border-radius: 3px;
 }
 
 .table-loading,
 .table-empty {
-  min-height: 220px;
+  min-height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(255, 255, 255, 0.65);
+  border-radius: 16px;
+  margin-top: 16px;
 }
 
 .borrow-table {
   width: 100%;
+  margin-top: 16px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  --el-table-border-color: rgba(0, 0, 0, 0.05);
+  --el-table-header-bg-color: rgba(249, 250, 251, 0.8);
+}
+
+.borrow-table :deep(th.el-table__cell) {
+  background-color: rgba(249, 250, 251, 0.8);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  height: 48px;
 }
 
 .actions {
   display: flex;
-  gap: 4px;
+  gap: 8px;
   justify-content: center;
+}
+
+.actions .el-button {
+  font-weight: 600;
 }
 </style>

@@ -81,6 +81,17 @@
           size="small"
           class="book-table"
         >
+          <el-table-column label="封面" width="84" align="center">
+            <template #default="scope">
+              <el-image
+                :src="resolveCoverUrl(scope.row.coverUrl)"
+                fit="cover"
+                style="width: 48px; height: 64px; border-radius: 6px"
+                :preview-src-list="[resolveCoverUrl(scope.row.coverUrl)]"
+                preview-teleported
+              />
+            </template>
+          </el-table-column>
           <el-table-column prop="title" label="书名" min-width="180" show-overflow-tooltip />
           <el-table-column prop="author" label="作者" min-width="120" show-overflow-tooltip />
           <el-table-column prop="categoryName" label="分类" min-width="100" />
@@ -130,6 +141,35 @@ const books = ref<BookItem[]>([])
 const total = ref(0)
 const loading = ref(false)
 const recentKeywords = ref<string[]>(JSON.parse(localStorage.getItem('recentKeywords') || '[]'))
+
+const apiBase = ((import.meta.env.VITE_APP_BASE_API as string) || '/api').replace(/\/$/, '')
+const defaultCover = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="64" viewBox="0 0 48 64">
+    <rect width="48" height="64" fill="#f2f3f5"/>
+    <rect x="6" y="8" width="36" height="48" rx="6" fill="#ffffff" stroke="#dcdfe6"/>
+    <text x="24" y="34" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="10" fill="#909399">BOOK</text>
+  </svg>`
+)}`
+
+const resolveCoverUrl = (raw?: string) => {
+  if (!raw) return defaultCover
+  if (raw.startsWith('data:') || raw.startsWith('blob:')) return raw
+
+  if (/^https?:\/\//i.test(raw)) {
+    try {
+      const u = new URL(raw)
+      if (u.hostname.endsWith('doubanio.com')) {
+        return `${apiBase}/public/image-proxy?url=${encodeURIComponent(raw)}`
+      }
+    } catch {
+      return defaultCover
+    }
+    return raw
+  }
+
+  const path = raw.startsWith('/') ? raw : `/${raw}`
+  return `${apiBase}${path}`
+}
 
 const query = reactive({
   keyword: (route.query.keyword as string) || '',
@@ -212,7 +252,7 @@ const clearHistory = () => {
   localStorage.removeItem('recentKeywords')
 }
 
-const goDetail = (id: number) => {
+const goDetail = (id: string | number) => {
   router.push(`/u/books/${id}`)
 }
 
@@ -236,61 +276,55 @@ onMounted(() => {
 
 <style scoped>
 .book-list-page {
-  max-width: 1100px;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
 }
 
 .book-list-page :deep(.el-card) {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: var(--color-surface);
   border: 1px solid var(--color-border-light);
-  border-radius: 20px;
-  transition: all 300ms ease;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 200ms ease, transform 200ms ease;
 }
 
 .book-list-page :deep(.el-card:hover) {
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: var(--shadow-lg);
-}
-
-.book-list-page :deep(.el-input__wrapper) {
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--color-border-light);
-  transition: all 200ms ease;
-}
-
-.book-list-page :deep(.el-input__wrapper:hover) {
-  background: rgba(255, 255, 255, 0.8);
-  border-color: var(--color-primary);
-}
-
-.book-list-page :deep(.el-input__wrapper.is-focus) {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  padding: 0 12px;
+}
+
+.eyebrow {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+  display: block;
 }
 
 .page-title {
-  margin: 8px 0 0;
-  font-size: clamp(24px, 2.6vw, 32px);
+  margin: 0;
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--color-text);
 }
 
 .page-subtitle {
   margin: 0;
+  font-size: 17px;
   color: var(--color-text-secondary);
+  max-width: 600px;
+  line-height: 1.5;
 }
 
 .card-header {
@@ -300,44 +334,65 @@ onMounted(() => {
 }
 
 .card-title {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-title::before {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 18px;
+  background: var(--color-primary);
+  border-radius: 2px;
 }
 
 .card-subtitle {
   display: block;
   margin-top: 4px;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--color-text-secondary);
+  font-weight: 500;
 }
 
 .filter-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 12px;
   align-items: center;
+  padding: 4px 0 20px;
 }
 
 .filter-item {
-  min-width: 140px;
+  min-width: 160px;
 }
 
 .keyword {
   flex: 1;
-  min-width: 220px;
+  min-width: 260px;
 }
 
 .helper-bar {
-  margin-top: 10px;
+  margin-top: 0;
+  margin-bottom: 20px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   flex-wrap: wrap;
+  padding: 12px 16px;
+  background: rgba(15, 23, 42, 0.03);
+  border-radius: 12px;
 }
 
 .helper-title {
   font-size: 12px;
+  font-weight: 600;
   color: var(--color-text-secondary);
+  text-transform: uppercase;
 }
 
 .chips {
@@ -347,31 +402,73 @@ onMounted(() => {
   flex-wrap: wrap;
 }
 
+.chips .el-tag {
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.chips .el-tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  color: var(--color-primary);
+}
+
 .table-loading,
 .table-empty {
-  min-height: 240px;
+  min-height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(255, 255, 255, 0.65);
+  border-radius: 16px;
 }
 
 .book-table {
-  margin-top: 12px;
+  margin-top: 8px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  --el-table-border-color: rgba(0, 0, 0, 0.05);
+  --el-table-header-bg-color: rgba(249, 250, 251, 0.8);
+}
+
+.book-table :deep(th.el-table__cell) {
+  background-color: rgba(249, 250, 251, 0.8);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  height: 48px;
 }
 
 .can-borrow {
-  color: var(--el-color-success);
+  color: #059669;
   font-weight: 600;
+  background: rgba(5, 150, 105, 0.1);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
 }
 
 .cannot-borrow {
-  color: var(--el-color-danger);
+  color: #dc2626;
   font-weight: 600;
+  background: rgba(220, 38, 38, 0.1);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
 }
 
 .pager {
   display: flex;
-  justify-content: flex-end;
-  padding-top: 12px;
+  justify-content: center;
+  padding-top: 32px;
+  padding-bottom: 16px;
+}
+
+.filter-bar .el-button {
+  height: 40px;
 }
 </style>

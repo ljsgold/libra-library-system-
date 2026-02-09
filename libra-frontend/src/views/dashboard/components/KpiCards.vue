@@ -142,7 +142,7 @@ onMounted(() => {
   border-radius: 14px;
   padding: 12px 14px;
   margin-bottom: 8px;
-  border: 1px solid rgba(107, 63, 42, 0.12);
+  border: 1px solid var(--color-border-light);
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
@@ -151,7 +151,7 @@ onMounted(() => {
 }
 
 .kpi-card.is-clickable:hover {
-  border-color: rgba(138, 90, 62, 0.4);
+  border-color: var(--color-primary);
   box-shadow: var(--shadow-md);
 }
 

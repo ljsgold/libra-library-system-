@@ -69,8 +69,11 @@ public class UserPortalService {
         vo.setIsbn(book.getIsbn());
         vo.setCoverUrl(book.getCoverUrl());
         vo.setCategoryName(categoryName(book.getCategoryId()));
-        int total = Optional.ofNullable(book.getTotalCount()).orElse(0);
-        int available = Optional.ofNullable(book.getStockCount()).orElse(0);
+        int total = Math.toIntExact(inventoryMapper.selectCount(new LambdaQueryWrapper<LibInventory>()
+                .eq(LibInventory::getBookId, book.getId())));
+        int available = Math.toIntExact(inventoryMapper.selectCount(new LambdaQueryWrapper<LibInventory>()
+                .eq(LibInventory::getBookId, book.getId())
+                .eq(LibInventory::getStatus, 1)));
         vo.setTotalCount(total);
         vo.setAvailableCount(available);
         vo.setCanBorrow(available > 0 && Optional.ofNullable(book.getStatus()).orElse(1) == 1);
@@ -252,6 +255,18 @@ public class UserPortalService {
         }
         record.setDueTime(record.getDueTime().plusDays(30));
         borrowRecordMapper.updateById(record);
+    }
+
+    public void returnBorrow(Long recordId) {
+        Long userId = requireUserId();
+        LibBorrowRecord record = borrowRecordMapper.selectById(recordId);
+        if (record == null || !Objects.equals(record.getUserId(), userId)) {
+            throw new BusinessException("借阅记录不存在");
+        }
+        if (record.getStatus() == null || (record.getStatus() != 1 && record.getStatus() != 3)) {
+            throw new BusinessException("借阅记录不可归还");
+        }
+        borrowService.returnBook(record.getInventoryId());
     }
 
     public UserProfileVO getProfile() {

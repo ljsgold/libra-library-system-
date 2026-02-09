@@ -1,35 +1,39 @@
 <template>
   <div class="home-page">
-    <!-- Hero Section -->
     <section class="hero">
-      <div class="hero-content">
+      <div class="page-shell hero-content">
         <span class="eyebrow">Libra Library</span>
         <h1 class="hero-title">发现你的下一本好书</h1>
         <p class="hero-subtitle">探索海量馆藏，轻松借阅，让阅读成为一种优雅的体验。</p>
         <div class="hero-search">
-          <el-input
-            v-model="keyword"
-            placeholder="搜索书名、作者或 ISBN..."
-            size="large"
-            clearable
-            @keyup.enter="handleSearch"
-          >
-            <template #append>
-              <el-button type="primary" @click="handleSearch">搜索</el-button>
-            </template>
-          </el-input>
+          <div class="search-wrapper">
+            <el-input
+              v-model="keyword"
+              placeholder="搜索书名、作者或 ISBN..."
+              size="large"
+              clearable
+              class="hero-input"
+              @keyup.enter="handleSearch"
+            >
+              <template #prefix>
+                <el-icon class="search-icon"><Search /></el-icon>
+              </template>
+            </el-input>
+            <el-button type="primary" class="search-btn" @click="handleSearch">
+              <span>搜索</span>
+              <el-icon class="btn-icon"><ArrowRight /></el-icon>
+            </el-button>
+          </div>
         </div>
         <div class="hero-stats">
           <div class="stat-item">
             <span class="stat-value">10,000+</span>
             <span class="stat-label">馆藏图书</span>
           </div>
-          <div class="stat-divider"></div>
           <div class="stat-item">
             <span class="stat-value">5,000+</span>
             <span class="stat-label">活跃读者</span>
           </div>
-          <div class="stat-divider"></div>
           <div class="stat-item">
             <span class="stat-value">98%</span>
             <span class="stat-label">满意度</span>
@@ -38,102 +42,104 @@
       </div>
     </section>
 
-    <!-- New Books Section -->
     <section class="section">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title">新书上架</h2>
-          <p class="section-subtitle">最新到馆的精选图书</p>
+      <div class="page-shell">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">新书上架</h2>
+            <p class="section-subtitle">最新到馆的精选图书</p>
+          </div>
+          <el-button type="primary" plain @click="goBooks('new')" class="section-cta">
+            查看全部
+            <el-icon><ArrowRight /></el-icon>
+          </el-button>
         </div>
-        <el-button text type="primary" @click="goBooks('new')" class="link-arrow">
-          查看全部
-        </el-button>
-      </div>
 
-      <div v-if="loadingNew" class="loading-state">
-        <el-skeleton :rows="3" animated />
-      </div>
-      <div v-else-if="!newBooks.length" class="empty-state">
-        <div class="empty-state__title">暂无新书</div>
-        <div class="empty-state__description">敬请期待更多精彩图书上架</div>
-      </div>
-      <div v-else class="book-grid">
-        <div
-          v-for="book in newBooks"
-          :key="book.id"
-          class="book-card"
-          @click="goBookDetail(book.id)"
-        >
-          <div class="book-cover" :style="{ backgroundImage: 'url(' + (book.coverUrl || defaultCover) + ')' }"></div>
-          <div class="book-info">
-            <h3 class="book-title">{{ book.title }}</h3>
-            <p class="book-author">{{ book.author }}</p>
-            <div class="book-status" :class="{ available: book.canBorrow }">
-              {{ book.canBorrow ? '可借阅' : '已借出' }}
+        <div v-if="loadingNew" class="loading-state">
+          <el-skeleton :rows="3" animated />
+        </div>
+        <div v-else-if="!newBooks.length" class="empty-state">
+          <div class="empty-state__title">暂无新书</div>
+          <div class="empty-state__description">敬请期待更多精彩图书上架</div>
+        </div>
+        <div v-else class="book-grid">
+          <div
+            v-for="book in newBooks"
+            :key="book.id"
+            class="book-card"
+            @click="goBookDetail(book.id)"
+          >
+            <el-image class="book-cover" :src="resolveCoverUrl(book.coverUrl)" fit="cover" />
+            <div class="book-info">
+              <h3 class="book-title">{{ book.title }}</h3>
+              <p class="book-author">{{ book.author }}</p>
+              <div class="book-status" :class="{ available: book.canBorrow }">
+                {{ book.canBorrow ? '可借阅' : '已借出' }}
+              </div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Popular Books Section -->
-    <section class="section section--gray">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title">热门借阅</h2>
-          <p class="section-subtitle">最受读者欢迎的图书</p>
-        </div>
-      </div>
-
-      <div v-if="loadingPopular" class="loading-state">
-        <el-skeleton :rows="4" animated />
-      </div>
-      <div v-else-if="!popularBooks.length" class="empty-state">
-        <div class="empty-state__title">暂无数据</div>
-      </div>
-      <div v-else class="popular-list">
-        <div
-          v-for="(book, index) in popularBooks"
-          :key="book.id"
-          class="popular-item"
-          @click="goBookDetail(book.id)"
-        >
-          <div class="popular-rank" :class="'rank-' + (index + 1)">{{ index + 1 }}</div>
-          <div class="popular-info">
-            <h4 class="popular-title">{{ book.title }}</h4>
-            <p class="popular-author">{{ book.author }}</p>
+    <section class="section section--muted">
+      <div class="page-shell">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">热门借阅</h2>
+            <p class="section-subtitle">最受读者欢迎的图书</p>
           </div>
-          <div class="popular-badge">
-            {{ book.availableCount }} 本可借
+        </div>
+
+        <div v-if="loadingPopular" class="loading-state">
+          <el-skeleton :rows="4" animated />
+        </div>
+        <div v-else-if="!popularBooks.length" class="empty-state">
+          <div class="empty-state__title">暂无数据</div>
+        </div>
+        <div v-else class="popular-list">
+          <div
+            v-for="(book, index) in popularBooks"
+            :key="book.id"
+            class="popular-item"
+            @click="goBookDetail(book.id)"
+          >
+            <div class="popular-rank" :class="'rank-' + (index + 1)">{{ index + 1 }}</div>
+            <div class="popular-info">
+              <h4 class="popular-title">{{ book.title }}</h4>
+              <p class="popular-author">{{ book.author }}</p>
+            </div>
+            <div class="popular-badge">{{ book.availableCount }} 本可借</div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Categories Section -->
     <section class="section">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title">分类浏览</h2>
-          <p class="section-subtitle">按类别探索更多图书</p>
+      <div class="page-shell">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">分类浏览</h2>
+            <p class="section-subtitle">按类别探索更多图书</p>
+          </div>
         </div>
-      </div>
 
-      <div v-if="loadingCategory" class="loading-state">
-        <el-skeleton :rows="2" animated />
-      </div>
-      <div v-else-if="!categories.length" class="empty-state">
-        <div class="empty-state__title">暂无分类</div>
-      </div>
-      <div v-else class="category-grid">
-        <div
-          v-for="c in categories"
-          :key="c.id"
-          class="category-card"
-          @click="goBooksByCategory(c.id)"
-        >
-          <span class="category-name">{{ c.name }}</span>
-          <span class="category-arrow">→</span>
+        <div v-if="loadingCategory" class="loading-state">
+          <el-skeleton :rows="2" animated />
+        </div>
+        <div v-else-if="!categories.length" class="empty-state">
+          <div class="empty-state__title">暂无分类</div>
+        </div>
+        <div v-else class="category-grid">
+          <div
+            v-for="c in categories"
+            :key="c.id"
+            class="category-card"
+            @click="goBooksByCategory(c.id)"
+          >
+            <span class="category-name">{{ c.name }}</span>
+            <el-icon class="category-arrow"><ArrowRight /></el-icon>
+          </div>
         </div>
       </div>
     </section>
@@ -141,6 +147,7 @@
 </template>
 
 <script setup lang="ts">
+import { Search, ArrowRight } from '@element-plus/icons-vue'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import type { BookItem, CategoryItem } from '@/api/user'
@@ -158,7 +165,34 @@ const loadingNew = ref(false)
 const loadingPopular = ref(false)
 const loadingCategory = ref(false)
 
-const defaultCover = 'https://via.placeholder.com/120x160?text=Book'
+const apiBase = ((import.meta.env.VITE_APP_BASE_API as string) || '/api').replace(/\/$/, '')
+const defaultCover = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="160" viewBox="0 0 120 160">
+    <rect width="120" height="160" fill="#f2f3f5"/>
+    <rect x="14" y="18" width="92" height="124" rx="8" fill="#ffffff" stroke="#dcdfe6"/>
+    <text x="60" y="86" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="18" fill="#909399">BOOK</text>
+  </svg>`
+)}`
+
+const resolveCoverUrl = (raw?: string) => {
+  if (!raw) return defaultCover
+  if (raw.startsWith('data:') || raw.startsWith('blob:')) return raw
+
+  if (/^https?:\/\//i.test(raw)) {
+    try {
+      const u = new URL(raw)
+      if (u.hostname.endsWith('doubanio.com')) {
+        return `${apiBase}/public/image-proxy?url=${encodeURIComponent(raw)}`
+      }
+    } catch {
+      return defaultCover
+    }
+    return raw
+  }
+
+  const path = raw.startsWith('/') ? raw : `/${raw}`
+  return `${apiBase}${path}`
+}
 
 const fetchNewBooks = async () => {
   loadingNew.value = true
@@ -214,7 +248,7 @@ const goBooksByCategory = (categoryId: number) => {
   })
 }
 
-const goBookDetail = (id: number) => {
+const goBookDetail = (id: string | number) => {
   router.push(`/u/books/${id}`)
 }
 
@@ -230,138 +264,146 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
 }
-
-/* Hero Section */
 .hero {
-  padding: 80px 24px;
-  text-align: center;
-  background: linear-gradient(180deg, var(--color-background) 0%, var(--color-background-secondary) 100%);
+  padding: 88px 0 64px;
+  text-align: left;
 }
 
 .hero-content {
-  max-width: 680px;
-  margin: 0 auto;
+  display: grid;
+  gap: 20px;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .hero-title {
-  font-size: 56px;
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  line-height: 1.07;
-  margin: 16px 0 20px;
+  font-size: clamp(40px, 5vw, 56px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  margin: 0;
   color: var(--color-text);
 }
 
 .hero-subtitle {
-  font-size: 21px;
-  line-height: 1.381;
+  font-size: 18px;
+  line-height: 1.6;
   color: var(--color-text-secondary);
-  margin: 0 0 40px;
+  margin: 0;
+  max-width: 640px;
 }
 
 .hero-search {
-  max-width: 560px;
-  margin: 0 auto 48px;
+  max-width: 640px;
 }
 
 .hero-search :deep(.el-input__wrapper) {
-  padding: 12px 8px 12px 20px;
-  border-radius: 16px;
-  box-shadow: var(--shadow-lg);
+  padding: 10px 128px 10px 46px;
+  border-radius: 14px;
   background: var(--color-surface);
   border: 1px solid var(--color-border-light);
-}
-
-.hero-search :deep(.el-input__wrapper:hover) {
-  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+  height: 54px;
 }
 
 .hero-search :deep(.el-input__wrapper.is-focus) {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1), var(--shadow-lg);
+  border-color: rgba(var(--color-primary-rgb), 0.35);
+  box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.12);
+}
+
+.search-icon {
+  font-size: 20px;
+  color: var(--color-text-secondary);
+  margin-left: 4px;
 }
 
 .hero-search :deep(.el-input__inner) {
-  font-size: 17px;
+  font-size: 16px;
+  height: 100%;
+  color: var(--color-text);
+  font-weight: 500;
 }
 
-.hero-search :deep(.el-input-group__append) {
-  background: transparent;
-  border: none;
-  padding: 0;
-  margin-left: 8px;
+.hero-search :deep(.el-input__inner::placeholder) {
+  color: var(--color-muted);
 }
 
-.hero-search :deep(.el-input-group__append .el-button) {
-  border-radius: 12px;
-  padding: 12px 24px;
+.search-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.search-btn {
+  position: absolute;
+  right: 8px;
+  top: 7px;
+  bottom: 7px;
+  border-radius: 12px !important;
+  padding: 0 18px !important;
+  font-weight: 700;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: auto !important;
+}
+
+.search-btn:hover {
+  transform: none;
+}
+
+.btn-icon {
+  font-size: 18px;
 }
 
 .hero-stats {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 32px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 720px;
 }
 
 .stat-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-xl);
+  padding: 20px 18px;
+  box-shadow: var(--shadow-sm);
 }
 
 .stat-value {
   font-size: 28px;
-  font-weight: 700;
-  color: var(--color-text);
-  letter-spacing: -0.02em;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  display: block;
+  margin-bottom: 8px;
 }
 
 .stat-label {
-  font-size: 13px;
+  font-size: 15px;
+  font-weight: 600;
   color: var(--color-text-secondary);
-  margin-top: 4px;
+  letter-spacing: 0.02em;
 }
-
-.stat-divider {
-  width: 1px;
-  height: 32px;
-  background: var(--color-border);
-}
-
-/* Sections */
 .section {
-  padding: 64px 24px;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
+  padding: 56px 0;
 }
 
-.section--gray {
-  background: var(--color-background-secondary);
-  max-width: none;
-  padding-left: 24px;
-  padding-right: 24px;
-}
-
-.section--gray > * {
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.section :deep(.el-card) {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--color-border-light);
-  border-radius: 20px;
-  transition: all 300ms ease;
-}
-
-.section :deep(.el-card:hover) {
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: var(--shadow-lg);
+.section--muted {
+  background: rgba(255, 255, 255, 0.6);
+  border-top: 1px solid var(--color-border-light);
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .section-header {
@@ -372,29 +414,25 @@ onMounted(() => {
 }
 
 .section-title {
-  font-size: 32px;
-  font-weight: 700;
+  font-size: 28px;
+  font-weight: 800;
   letter-spacing: -0.02em;
   margin: 0 0 8px;
   color: var(--color-text);
 }
 
 .section-subtitle {
-  font-size: 17px;
+  font-size: 16px;
   color: var(--color-text-secondary);
   margin: 0;
 }
 
-.link-arrow::after {
-  content: ' →';
-  transition: transform 200ms ease;
+.section-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.link-arrow:hover::after {
-  transform: translateX(4px);
-}
-
-/* Book Grid */
 .book-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -408,18 +446,17 @@ onMounted(() => {
   cursor: pointer;
   transition: all 300ms cubic-bezier(0.25, 0.1, 0.25, 1);
   box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border-light);
 }
 
 .book-card:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-xl);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
 }
 
 .book-cover {
   width: 100%;
   aspect-ratio: 3/4;
-  background-size: cover;
-  background-position: center;
   background-color: var(--color-background-secondary);
 }
 
@@ -459,7 +496,6 @@ onMounted(() => {
   color: #248A3D;
 }
 
-/* Popular List */
 .popular-list {
   display: flex;
   flex-direction: column;
@@ -475,12 +511,12 @@ onMounted(() => {
   border-radius: 14px;
   cursor: pointer;
   transition: all 200ms ease;
+  border: 1px solid var(--color-border-light);
 }
 
 .popular-item:hover {
-  background: var(--color-surface);
   box-shadow: var(--shadow-md);
-  transform: translateX(4px);
+  transform: translateY(-2px);
 }
 
 .popular-rank {
@@ -497,18 +533,16 @@ onMounted(() => {
 }
 
 .popular-rank.rank-1 {
-  background: linear-gradient(135deg, #FFD700, #FFA500);
-  color: white;
+  background: rgba(var(--color-primary-rgb), 0.12);
+  color: var(--color-primary);
 }
 
 .popular-rank.rank-2 {
-  background: linear-gradient(135deg, #C0C0C0, #A0A0A0);
-  color: white;
+  background: rgba(15, 23, 42, 0.06);
 }
 
 .popular-rank.rank-3 {
-  background: linear-gradient(135deg, #CD7F32, #B87333);
-  color: white;
+  background: rgba(15, 23, 42, 0.06);
 }
 
 .popular-info {
@@ -534,11 +568,10 @@ onMounted(() => {
   font-weight: 600;
   padding: 6px 12px;
   border-radius: 8px;
-  background: rgba(0, 122, 255, 0.1);
+  background: rgba(var(--color-primary-rgb), 0.1);
   color: var(--color-primary);
 }
 
-/* Category Grid */
 .category-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -550,14 +583,14 @@ onMounted(() => {
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  background: var(--color-background-secondary);
+  background: var(--color-surface);
   border-radius: 12px;
   cursor: pointer;
   transition: all 200ms ease;
+  border: 1px solid var(--color-border-light);
 }
 
 .category-card:hover {
-  background: var(--color-surface);
   box-shadow: var(--shadow-md);
 }
 
@@ -576,8 +609,6 @@ onMounted(() => {
   transform: translateX(4px);
   color: var(--color-primary);
 }
-
-/* Loading & Empty States */
 .loading-state {
   padding: 40px 0;
 }
@@ -599,10 +630,9 @@ onMounted(() => {
   color: var(--color-text-secondary);
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .hero {
-    padding: 48px 16px;
+    padding: 56px 0 40px;
   }
 
   .hero-title {
@@ -610,7 +640,7 @@ onMounted(() => {
   }
 
   .hero-subtitle {
-    font-size: 17px;
+    font-size: 16px;
   }
 
   .hero-stats {
@@ -622,7 +652,7 @@ onMounted(() => {
   }
 
   .section {
-    padding: 40px 16px;
+    padding: 40px 0;
   }
 
   .section-title {

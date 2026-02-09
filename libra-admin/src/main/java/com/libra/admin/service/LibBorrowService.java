@@ -2,7 +2,6 @@ package com.libra.admin.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.libra.admin.dto.BorrowDTO;
-import com.libra.admin.entity.LibBook;
 import com.libra.admin.entity.LibBorrowRecord;
 import com.libra.admin.entity.LibInventory;
 import com.libra.admin.mapper.LibBookMapper;
@@ -50,6 +49,7 @@ public class LibBorrowService {
                 .last("limit 1 for update"));
 
         if (inventory == null) {
+            syncBookCounts(bookId);
             throw new BusinessException("该图书当前无可用库存");
         }
 
@@ -81,7 +81,9 @@ public class LibBorrowService {
         // 1. 查找借阅记录
         LibBorrowRecord record = borrowRecordMapper.selectOne(new LambdaQueryWrapper<LibBorrowRecord>()
                 .eq(LibBorrowRecord::getInventoryId, inventoryId)
-                .eq(LibBorrowRecord::getStatus, 1));
+                .in(LibBorrowRecord::getStatus, 1, 3)
+                .orderByDesc(LibBorrowRecord::getBorrowTime)
+                .last("limit 1"));
 
         if (record == null) {
             throw new BusinessException("未找到该馆藏的借阅记录");
@@ -94,12 +96,32 @@ public class LibBorrowService {
 
         // 3. 更新馆藏状态为在馆
         LibInventory inventory = inventoryMapper.selectById(inventoryId);
+        if (inventory == null) {
+            throw new BusinessException("馆藏不存在");
+        }
         inventory.setStatus(1);
         inventoryMapper.updateById(inventory);
 
         // 4. 更新图书主表在馆册数
-        LibBook book = bookMapper.selectById(record.getBookId());
-        book.setStockCount(book.getStockCount() + 1);
+        int updateCount = bookMapper.updateStock(record.getBookId(), 1);
+        if (updateCount == 0) {
+            throw new BusinessException("库存回滚失败");
+        }
+    }
+
+    private void syncBookCounts(Long bookId) {
+        long total = inventoryMapper.selectCount(new LambdaQueryWrapper<LibInventory>()
+                .eq(LibInventory::getBookId, bookId));
+        long available = inventoryMapper.selectCount(new LambdaQueryWrapper<LibInventory>()
+                .eq(LibInventory::getBookId, bookId)
+                .eq(LibInventory::getStatus, 1));
+
+        com.libra.admin.entity.LibBook book = bookMapper.selectById(bookId);
+        if (book == null) {
+            return;
+        }
+        book.setTotalCount((int) total);
+        book.setStockCount((int) available);
         bookMapper.updateById(book);
     }
 }

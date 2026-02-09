@@ -8,7 +8,7 @@ export interface CategoryItem {
 
 // 图书基础信息
 export interface BookItem {
-  id: number
+  id: string
   title: string
   author: string
   isbn: string
@@ -74,7 +74,7 @@ export function reserveBook(bookId: number | string) {
 
 // 我的借阅
 export interface BorrowRecord {
-  id: number
+  id: string
   bookTitle: string
   author: string
   borrowDate: string
@@ -92,13 +92,17 @@ export function getHistoryBorrowList() {
   return request.get<BorrowRecord[]>('/user/my-borrow/history')
 }
 
-export function renewBorrow(id: number) {
+export function renewBorrow(id: number | string) {
   return request.post<void>('/user/my-borrow/renew', { id })
+}
+
+export function returnBorrow(id: number | string) {
+  return request.post<void>('/user/my-borrow/return', { id })
 }
 
 // 预约记录
 export interface ReservationRecord {
-  id: number
+  id: string
   bookTitle: string
   author: string
   status: 'WAITING' | 'NOTIFIED' | 'CANCELLED'
@@ -113,11 +117,11 @@ export function getReservationList() {
   return request.get<ReservationRecord[]>('/user/reservations')
 }
 
-export function cancelReservation(id: number) {
+export function cancelReservation(id: number | string) {
   return request.post<void>('/user/reservations/cancel', { id })
 }
 
-export function subscribeArrival(id: number) {
+export function subscribeArrival(id: number | string) {
   return request.post<void>('/user/reservations/subscribe', { id })
 }
 

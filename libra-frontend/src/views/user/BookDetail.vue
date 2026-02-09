@@ -23,10 +23,7 @@
       </div>
       <div v-else class="detail-body">
         <div class="basic">
-          <div
-            class="cover-large"
-            :style="{ backgroundImage: 'url(' + (detail.coverUrl || defaultCover) + ')' }"
-          />
+          <el-image class="cover-large" :src="resolveCoverUrl(detail.coverUrl)" fit="cover" />
           <div class="info">
             <h2 class="title">{{ detail.title }}</h2>
             <div class="meta">
@@ -92,7 +89,34 @@ const reserving = ref(false)
 const detail = ref<BookDetail | null>(null)
 const rules = ref<BorrowRuleItem[]>([])
 
-const defaultCover = 'https://via.placeholder.com/120x160?text=%E5%9B%BE%E4%B9%A6'
+const apiBase = ((import.meta.env.VITE_APP_BASE_API as string) || '/api').replace(/\/$/, '')
+const defaultCover = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="420" viewBox="0 0 300 420">
+    <rect width="300" height="420" fill="#f2f3f5"/>
+    <rect x="32" y="44" width="236" height="332" rx="16" fill="#ffffff" stroke="#dcdfe6"/>
+    <text x="150" y="215" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="34" fill="#909399">图书</text>
+  </svg>`
+)}`
+
+const resolveCoverUrl = (raw?: string) => {
+  if (!raw) return defaultCover
+  if (raw.startsWith('data:') || raw.startsWith('blob:')) return raw
+
+  if (/^https?:\/\//i.test(raw)) {
+    try {
+      const u = new URL(raw)
+      if (u.hostname.endsWith('doubanio.com')) {
+        return `${apiBase}/public/image-proxy?url=${encodeURIComponent(raw)}`
+      }
+    } catch {
+      return defaultCover
+    }
+    return raw
+  }
+
+  const path = raw.startsWith('/') ? raw : `/${raw}`
+  return `${apiBase}${path}`
+}
 
 const fetchDetail = async () => {
   const id = route.params.id as string
@@ -162,167 +186,221 @@ onMounted(() => {
 
 <style scoped>
 .detail-page {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
 }
 
 .detail-page :deep(.el-card) {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: var(--color-surface);
   border: 1px solid var(--color-border-light);
-  border-radius: 20px;
-  transition: all 300ms ease;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 200ms ease, transform 200ms ease;
 }
 
 .detail-page :deep(.el-card:hover) {
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: var(--shadow-lg);
-}
-
-.detail-page :deep(.el-input__wrapper) {
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--color-border-light);
-  transition: all 200ms ease;
-}
-
-.detail-page :deep(.el-input__wrapper:hover) {
-  background: rgba(255, 255, 255, 0.8);
-  border-color: var(--color-primary);
-}
-
-.detail-page :deep(.el-input__wrapper.is-focus) {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  padding: 0 12px;
+}
+
+.eyebrow {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+  display: block;
 }
 
 .page-title {
-  margin: 8px 0 0;
-  font-size: clamp(24px, 2.6vw, 32px);
+  margin: 0;
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--color-text);
 }
 
 .page-subtitle {
   margin: 0;
+  font-size: 17px;
   color: var(--color-text-secondary);
+  max-width: 600px;
+  line-height: 1.5;
 }
 
 .card-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
 }
 
 .detail-loading {
-  min-height: 260px;
+  min-height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .detail-body {
-  padding-top: 4px;
+  padding: 12px;
 }
 
 .basic {
   display: flex;
-  gap: 20px;
+  gap: 32px;
 }
 
 .cover-large {
-  width: 140px;
-  height: 190px;
-  border-radius: 12px;
+  width: 180px;
+  height: 250px;
+  border-radius: 16px;
   background-size: cover;
   background-position: center;
-  background-color: var(--color-background-secondary);
-  border: 1px solid var(--color-border-light);
+  background-color: rgba(15, 23, 42, 0.02);
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: var(--shadow-md);
 }
 
 .info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .title {
   margin: 0;
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  line-height: 1.3;
 }
 
 .meta {
-  margin-top: 8px;
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  font-size: 13px;
+  gap: 16px;
+  font-size: 14px;
   color: var(--color-text-secondary);
 }
 
+.meta span {
+  background: rgba(15, 23, 42, 0.03);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
 .status {
-  margin-top: 8px;
-  font-size: 13px;
-}
-
-.can-borrow {
-  color: var(--el-color-success);
-  font-weight: 600;
-}
-
-.cannot-borrow {
-  color: var(--el-color-danger);
-  font-weight: 600;
-}
-
-.actions {
-  margin-top: 12px;
+  margin-top: 4px;
+  font-size: 14px;
   display: flex;
+  align-items: center;
   gap: 8px;
 }
 
+.can-borrow {
+  color: #059669;
+  font-weight: 700;
+  background: rgba(5, 150, 105, 0.1);
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+.cannot-borrow {
+  color: #dc2626;
+  font-weight: 700;
+  background: rgba(220, 38, 38, 0.1);
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+.actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 16px;
+}
+
+.actions .el-button {
+  height: 44px;
+  border-radius: 12px;
+  padding: 0 32px;
+  font-weight: 600;
+  font-size: 15px;
+  box-shadow: none;
+}
+
 .section {
-  margin-top: 12px;
+  margin-top: 24px;
+  background: rgba(15, 23, 42, 0.02);
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid var(--color-border-light);
 }
 
 .section h3 {
-  margin: 0 0 8px;
-  font-size: 15px;
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section h3::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  background: var(--color-primary);
+  border-radius: 2px;
+  display: block;
 }
 
 .desc {
   margin: 0;
-  font-size: 13px;
+  font-size: 15px;
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .rules {
-  padding-left: 18px;
+  padding-left: 20px;
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  line-height: 1.8;
+}
+
+.rules li {
+  margin-bottom: 6px;
 }
 
 @media (max-width: 768px) {
   .basic {
     flex-direction: column;
     align-items: center;
+    text-align: center;
   }
-
+  
   .info {
-    width: 100%;
+    align-items: center;
+  }
+  
+  .actions {
+    justify-content: center;
   }
 }
 </style>

@@ -115,41 +115,58 @@ onMounted(() => {
 
 <style scoped>
 .profile-page {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 32px;
 }
 
 .profile-page :deep(.el-card) {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: var(--color-surface);
   border: 1px solid var(--color-border-light);
-  border-radius: 20px;
-  transition: all 300ms ease;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 200ms ease, transform 200ms ease;
+  height: 100%;
 }
 
 .profile-page :deep(.el-card:hover) {
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  padding: 0 12px;
+}
+
+.eyebrow {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+  display: inline-block;
 }
 
 .page-title {
-  margin: 8px 0 0;
-  font-size: clamp(24px, 2.6vw, 32px);
+  margin: 0;
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--color-text);
 }
 
 .page-subtitle {
   margin: 0;
+  font-size: 17px;
   color: var(--color-text-secondary);
+  max-width: 600px;
+  line-height: 1.5;
 }
 
 .card-header {
@@ -159,31 +176,73 @@ onMounted(() => {
 }
 
 .card-title {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-title::before {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 18px;
+  background: var(--color-primary);
+  border-radius: 2px;
 }
 
 .card-loading {
-  min-height: 160px;
+  min-height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .profile-info {
-  font-size: 13px;
+  font-size: 14px;
+}
+
+.profile-page :deep(.el-descriptions__cell) {
+  padding: 16px 24px !important;
+  background-color: transparent !important;
+}
+
+.profile-page :deep(.el-descriptions__label) {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  width: 100px;
+}
+
+.profile-page :deep(.el-descriptions__content) {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.rules {
+  padding: 8px;
 }
 
 .rules ul {
-  padding-left: 16px;
+  padding-left: 20px;
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  line-height: 1.8;
+}
+
+.rules li {
+  margin-bottom: 8px;
+}
+
+.rules strong {
+  color: var(--color-text);
+  font-weight: 600;
 }
 
 .mt-16 {
-  margin-top: 16px;
+  margin-top: 32px;
 }
 
 .mt-md-0 {
@@ -192,7 +251,7 @@ onMounted(() => {
 
 @media (max-width: 991px) {
   .mt-md-0 {
-    margin-top: 16px;
+    margin-top: 32px;
   }
 }
 </style>

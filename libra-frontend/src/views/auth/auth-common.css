@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   padding: 48px 24px;
-  background: var(--color-background-secondary);
+  background: var(--color-background);
 }
 
 .auth-shell {
@@ -17,51 +17,53 @@
 
 .auth-intro {
   display: grid;
-  gap: 20px;
+  gap: 24px;
 }
 
 .eyebrow {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.15em;
   color: var(--color-primary);
+  margin-bottom: 8px;
 }
 
 .auth-title {
-  font-size: clamp(32px, 4.6vw, 48px);
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  line-height: 1.08;
+  font-size: clamp(40px, 5vw, 64px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
   margin: 0;
   color: var(--color-text);
 }
 
 .auth-lede {
-  font-size: 17px;
-  line-height: 1.47;
+  font-size: 20px;
+  line-height: 1.5;
   color: var(--color-text-secondary);
-  max-width: 420px;
+  max-width: 480px;
   margin: 0;
+  font-weight: 400;
 }
 
 .auth-highlights {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 16px;
-  margin-top: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
 }
 
 .auth-highlight {
   border-top: 1px solid var(--color-border);
   padding-top: 16px;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--color-text-secondary);
 }
 
 .auth-highlight strong {
   display: block;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--color-text);
@@ -70,19 +72,17 @@
 
 .auth-card {
   width: 100%;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 20px;
-  box-shadow: var(--shadow-xl);
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
   border: 1px solid var(--color-border-light);
-  padding: 32px;
+  padding: 40px;
   box-sizing: border-box;
 }
 
 .brand {
   text-align: left;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
   cursor: pointer;
   transition: opacity 200ms ease;
 }
@@ -92,16 +92,17 @@
 }
 
 .brand-title {
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--color-text);
 }
 
 .brand-subtitle {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--color-text-secondary);
   margin-top: 4px;
+  font-weight: 500;
 }
 
 .brand-compact {
@@ -112,61 +113,86 @@
   color: var(--color-text);
   font-weight: 600;
   font-size: 14px;
+  padding-bottom: 8px;
 }
 
 .auth-card :deep(.el-input__wrapper) {
-  border-radius: 12px;
-  background: var(--color-background-secondary);
-  border: none;
+  border-radius: 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
   box-shadow: none;
-  padding: 12px 16px;
-  transition: all 200ms ease;
+  padding: 8px 16px;
+  transition: all 0.2s ease;
+  height: 48px;
 }
 
 .auth-card :deep(.el-input__wrapper:hover) {
-  background: rgba(0, 0, 0, 0.06);
+  border-color: rgba(var(--color-primary-rgb), 0.25);
 }
 
 .auth-card :deep(.el-input__wrapper.is-focus) {
-  background: var(--color-surface);
-  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.2);
+  box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.12);
+  border-color: rgba(var(--color-primary-rgb), 0.35);
 }
 
 .auth-card :deep(.el-input__inner) {
   font-size: 16px;
+  font-weight: 500;
+  color: var(--color-text);
+  height: 100%;
 }
 
 .submit-btn {
   width: 100%;
-  height: 48px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 16px;
-  margin-top: 8px;
+  height: 52px;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 17px;
+  margin-top: 16px;
 }
 
 .extra {
-  margin-top: 16px;
+  margin-top: 24px;
   text-align: center;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--color-text-secondary);
 }
 
 @media (max-width: 960px) {
   .auth-shell {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 40px;
   }
 
   .auth-intro {
     text-align: center;
+    gap: 16px;
+  }
+  
+  .auth-title {
+    font-size: 40px;
   }
 
   .auth-lede {
     margin: 0 auto;
+    font-size: 17px;
+  }
+  
+  .auth-highlights {
+    justify-content: center;
+    gap: 16px;
+  }
+  
+  .auth-highlight {
+    text-align: center;
   }
 
   .brand-compact {
     display: block;
+    text-align: center;
+  }
+  
+  .auth-card {
+    padding: 32px 24px;
   }
 }

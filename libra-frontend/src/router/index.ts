@@ -45,6 +45,11 @@ const router = createRouter({
           path: 'borrows',
           name: 'AdminBorrows',
           component: () => import('../views/admin/BorrowManage.vue')
+        },
+        {
+          path: ':pathMatch(.*)*',
+          name: 'AdminNotFound',
+          component: () => import('../views/NotFound.vue')
         }
       ]
     },
@@ -89,8 +94,18 @@ const router = createRouter({
           path: 'profile',
           name: 'UserProfile',
           component: () => import('../views/user/Profile.vue')
+        },
+        {
+          path: ':pathMatch(.*)*',
+          name: 'UserNotFound',
+          component: () => import('../views/NotFound.vue')
         }
       ]
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: () => import('../views/NotFound.vue')
     }
   ]
 })

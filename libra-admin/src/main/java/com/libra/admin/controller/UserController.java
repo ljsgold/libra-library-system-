@@ -90,6 +90,13 @@ public class UserController {
         return R.ok();
     }
 
+    @PostMapping("/my-borrow/return")
+    @Operation(summary = "归还")
+    public R<Void> returnBorrow(@Valid @RequestBody IdDTO dto) {
+        userPortalService.returnBorrow(dto.getId());
+        return R.ok();
+    }
+
     @GetMapping("/profile")
     @Operation(summary = "个人信息")
     public R<UserProfileVO> profile() {

@@ -213,8 +213,8 @@ const goLogin = () => router.push({ path: '/login', query: { username: form.user
 }
 
 .steps :deep(.el-step__icon) {
-  background: rgba(138, 90, 62, 0.12);
-  border-color: rgba(138, 90, 62, 0.3);
+  background: rgba(10, 108, 255, 0.08);
+  border-color: rgba(10, 108, 255, 0.2);
 }
 
 .code-row {
