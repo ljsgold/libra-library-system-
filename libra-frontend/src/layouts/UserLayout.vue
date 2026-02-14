@@ -35,10 +35,7 @@
         </el-menu>
       </nav>
       <div class="user-actions">
-        <el-button v-if="isAdmin" size="small" type="primary" plain @click="goAdmin" class="admin-btn">
-          管理后台
-        </el-button>
-        <el-dropdown @command="handleCommand" trigger="click">
+        <el-dropdown @command="handleCommand" trigger="click" placement="bottom-end">
           <div class="user-trigger">
             <div class="avatar">{{ avatarText }}</div>
             <div class="user-meta">
@@ -49,6 +46,12 @@
           </div>
           <template #dropdown>
             <el-dropdown-menu class="custom-dropdown">
+              <el-dropdown-item v-if="isAdmin" command="switch-admin">
+                <span class="dropdown-item-content">
+                  <el-icon class="dropdown-item-icon"><Collection /></el-icon>
+                  <span>切换到管理后台</span>
+                </span>
+              </el-dropdown-item>
               <el-dropdown-item command="profile">
                 <span class="dropdown-item-content">
                   <el-icon class="dropdown-item-icon"><Setting /></el-icon>
@@ -103,6 +106,10 @@ const handleSelect = (index: string) => {
 }
 
 const handleCommand = (command: string) => {
+  if (command === 'switch-admin') {
+    router.push('/admin/dashboard')
+    return
+  }
   if (command === 'profile') {
     router.push('/u/profile')
     return
@@ -114,10 +121,6 @@ const handleCommand = (command: string) => {
 
 const goHome = () => {
   router.push('/u/home')
-}
-
-const goAdmin = () => {
-  router.push('/admin/dashboard')
 }
 
 onMounted(() => {
@@ -134,21 +137,26 @@ onMounted(() => {
 
 .user-header {
   position: sticky;
-  top: 16px;
+  top: 20px;
   z-index: 100;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
-  padding: 12px 18px;
-  margin: 16px auto 0;
-  width: calc(100% - 48px);
+  padding: 14px 24px;
+  margin: 20px auto 0;
+  width: calc(100% - 64px);
   max-width: var(--container-max);
-  gap: 24px;
-  transition: all 0.3s ease;
+  gap: 32px;
+  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
 .user-header:hover {
-  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.04), 0 6px 6px rgba(0, 0, 0, 0.05);
 }
 
 .brand {
@@ -156,21 +164,28 @@ onMounted(() => {
   align-items: center;
   gap: 12px;
   cursor: pointer;
+  justify-self: start;
   padding-right: 24px;
 }
 
 .brand-logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 14px;
-  background: var(--color-text);
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
   color: white;
-  font-weight: 800;
-  font-size: 24px;
+  font-weight: 700;
+  font-size: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 12px rgba(var(--color-primary-rgb), 0.25);
+  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.brand:hover .brand-logo {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(var(--color-primary-rgb), 0.3);
 }
 
 .brand-text {
@@ -194,9 +209,10 @@ onMounted(() => {
 }
 
 .nav {
-  flex: 1;
   display: flex;
   justify-content: center;
+  justify-self: center;
+  min-width: 0;
 }
 
 .nav :deep(.el-menu--horizontal) {
@@ -243,12 +259,7 @@ onMounted(() => {
 .user-actions {
   display: flex;
   align-items: center;
-  gap: 16px;
-}
-
-.admin-btn {
-  border-radius: 12px;
-  font-weight: 600;
+  justify-self: end;
 }
 
 .user-trigger {
@@ -256,16 +267,17 @@ onMounted(() => {
   align-items: center;
   gap: 12px;
   cursor: pointer;
-  padding: 6px 8px 6px 6px;
+  padding: 6px 12px 6px 6px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.7);
   border: 1px solid var(--color-border-light);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .user-trigger:hover {
-  background: white;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 .avatar {
@@ -332,6 +344,7 @@ onMounted(() => {
 
 @media (max-width: 900px) {
   .user-header {
+    display: flex;
     flex-direction: column;
     align-items: stretch;
     margin: 12px 12px 0;
@@ -345,6 +358,10 @@ onMounted(() => {
     overflow-x: auto;
     justify-content: flex-start;
     padding-bottom: 4px;
+  }
+
+  .user-actions {
+    justify-content: flex-end;
   }
   
   .user-main {

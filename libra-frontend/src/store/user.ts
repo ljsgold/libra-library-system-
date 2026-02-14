@@ -1,5 +1,11 @@
 import { defineStore } from 'pinia'
-import { login as loginApi, loginByCode as loginByCodeApi, type CodeLoginPayload, type LoginPayload } from '@/api/auth'
+import { 
+  login as loginApi, 
+  loginByCode as loginByCodeApi, 
+  wechatLogin as wechatLoginApi,
+  type CodeLoginPayload, 
+  type LoginPayload 
+} from '@/api/auth'
 import { getUserProfile, type UserProfile } from '@/api/user'
 
 export const useUserStore = defineStore('user', {
@@ -31,6 +37,17 @@ export const useUserStore = defineStore('user', {
         await this.fetchUserInfo(true)
       } catch (e) {
         // 用户信息获取失败不阻断登录
+      }
+    },
+    async wechatLogin(code: string) {
+      const data: any = await wechatLoginApi(code)
+      if (data?.accessToken && data?.refreshToken) {
+        this.setTokens(data)
+        try {
+          await this.fetchUserInfo(true)
+        } catch (e) {
+          // 用户信息获取失败不阻断登录
+        }
       }
     },
     async fetchUserInfo(force = false) {

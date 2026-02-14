@@ -23,7 +23,7 @@
         </el-menu-item>
       </el-menu>
       <div class="sidebar-footer">
-        <div class="user-card" @click="goReader">
+        <div class="user-card">
           <div class="avatar">{{ avatarText }}</div>
           <div class="user-info">
             <div class="user-name">{{ displayName }}</div>
@@ -39,16 +39,21 @@
           <h1 class="topbar-title">{{ pageTitle }}</h1>
         </div>
         <div class="topbar-actions">
-          <el-button size="small" @click="goReader">
-            切换到读者端
-          </el-button>
-          <el-dropdown @command="handleCommand">
-            <el-button size="small" circle>
-              <span style="font-size: 16px;">⋯</span>
+          <el-dropdown @command="handleCommand" placement="bottom-end">
+            <el-button size="small" class="topbar-user-trigger">
+              <span class="topbar-user-name">{{ displayName }}</span>
+              <el-icon class="topbar-dropdown-icon"><CaretBottom /></el-icon>
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="logout">退出登录</el-dropdown-item>
+                <el-dropdown-item command="switch-reader">
+                  <el-icon><User /></el-icon>
+                  <span>切换到读者端</span>
+                </el-dropdown-item>
+                <el-dropdown-item command="logout" divided>
+                  <el-icon><SwitchButton /></el-icon>
+                  <span>退出登录</span>
+                </el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -65,7 +70,7 @@
 import { computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/store/user'
-import { Collection, DataAnalysis, Tickets } from '@element-plus/icons-vue'
+import { CaretBottom, Collection, DataAnalysis, SwitchButton, Tickets, User } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -95,6 +100,10 @@ const goReader = () => {
 }
 
 const handleCommand = (command: string) => {
+  if (command === 'switch-reader') {
+    goReader()
+    return
+  }
   if (command === 'logout') {
     userStore.logout()
   }
@@ -231,16 +240,16 @@ onMounted(() => {
   gap: 16px;
   padding: 16px;
   border-radius: 16px;
-  cursor: pointer;
+  cursor: default;
   transition: all 0.3s ease;
   background: rgba(255,255,255,0.5);
   border: 1px solid rgba(0,0,0,0.05);
 }
 
 .user-card:hover {
-  background: #ffffff;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-  transform: translateY(-2px);
+  background: rgba(255,255,255,0.5);
+  box-shadow: none;
+  transform: none;
 }
 
 .avatar {
@@ -304,7 +313,22 @@ onMounted(() => {
 .topbar-actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+}
+
+.topbar-user-trigger {
+  min-width: 116px;
+  justify-content: space-between;
+}
+
+.topbar-user-name {
+  max-width: 96px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar-dropdown-icon {
+  margin-left: 8px;
 }
 
 .content {

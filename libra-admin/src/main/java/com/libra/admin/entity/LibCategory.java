@@ -9,21 +9,16 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("sys_user")
-public class SysUser {
+@TableName("lib_category")
+public class LibCategory {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
     private Long tenantId;
-    private String username;
-    private String password;
-    private String nickname;
-    private String email;
-    private String phone;
-    private String avatar;
-    private String wechatOpenid;
-    private Integer status;
-    private String lastLoginIp;
-    private LocalDateTime lastLoginTime;
+    private String categoryCode;
+    private String categoryName;
+    private Long parentId;
+    private Integer sortOrder;
+    private String description;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
     

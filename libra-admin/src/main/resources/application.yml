@@ -35,6 +35,29 @@ jwt:
   secret: libra-bms-secret-key-libra-bms-secret-key-libra-bms
   expiration: 86400
 
+wechat:
+  # ===== 微信登录配置（可选功能）=====
+  # 
+  # 【重要说明】个人开发者解决方案：
+  # 1. 微信开放平台的网站应用确实需要企业资质认证，个人开发者无法直接使用
+  # 2. 但个人开发者可以通过以下方式获得 AppID：
+  #    - 使用企业/个体户营业执照注册微信开放平台账号（推荐）
+  #    - 申请微信开放平台测试号（仅用于开发测试，不能用于生产环境）
+  #    - 使用微信公众平台的网页授权（需要公众号，功能不同）
+  # 
+  # 如果不需要微信登录功能，保持 appid 为 your_appid 即可，前端会自动隐藏微信登录按钮
+  # 
+  # 如需启用微信登录，请按以下步骤配置：
+  # 1. 访问 https://open.weixin.qq.com/ 注册账号（企业/个体户/测试号）
+  # 2. 创建网站应用并获取 AppID 和 AppSecret
+  # 3. 在微信开放平台配置授权回调域名（例如：localhost 或你的域名）
+  # 4. 填写以下信息（redirect-uri 必须是前端登录页面的完整URL）
+  appid: your_appid  # 保持为 your_appid 表示未启用微信登录
+  secret: your_secret
+  # 注意：redirect-uri 必须指向前端登录页面，微信回调会带 code 参数
+  # 前端登录页面会自动检测 code 参数并调用后端接口完成登录
+  redirect-uri: http://localhost:5173/login  # 根据实际前端地址修改（开发环境通常是 5173，生产环境需要改为实际域名）
+
 logging:
   level:
     com.libra: debug

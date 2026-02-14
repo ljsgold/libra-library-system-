@@ -19,13 +19,13 @@ VALUES
   (1001, 1, '20250001', '$2b$10$04Lx3lpMTYhRNvdKEqre6uriP7MYE/uiA0L0MXx0ampRcxizx4nbm', '张同学', 'student@example.com', '13800000001', 1, NOW(), NOW(), 0),
   (1002, 1, 'admin01',  '$2b$10$04Lx3lpMTYhRNvdKEqre6uriP7MYE/uiA0L0MXx0ampRcxizx4nbm', '系统管理员', 'admin@example.com',  '13800000002', 1, NOW(), NOW(), 0);
 
--- Books
+-- Books (使用中图法分类：18=工业技术，13=数理科学和化学)
 INSERT INTO lib_book (id, tenant_id, isbn, title, author, publisher, pub_date, price, category_id, cover_url, summary, total_count, stock_count, status, create_time, update_time, is_deleted)
 VALUES
-  (2001, 1, '9787300000011', '计算机网络', '谢希仁', '电子工业出版社', '2020-01-01', 39.80, 1, '', '经典教材，覆盖网络基础与协议。', 3, 2, 1, NOW(), NOW(), 0),
-  (2002, 1, '9787300000028', '数据结构', '严蔚敏', '清华大学出版社', '2019-06-01', 49.80, 2, '', '常用数据结构与算法入门。', 2, 2, 1, NOW(), NOW(), 0),
-  (2003, 1, '9787300000035', '操作系统', '汤小丹', '西安电子科技大学出版社', '2021-03-01', 59.00, 3, '', '操作系统原理与实践。', 4, 4, 1, NOW(), NOW(), 0),
-  (2004, 1, '9787300000042', 'Java 编程思想', 'Bruce Eckel', '机械工业出版社', '2018-08-01', 89.00, 2, '', 'Java 经典权威著作。', 2, 1, 1, NOW(), NOW(), 0);
+  (2001, 1, '9787300000011', '计算机网络', '谢希仁', '电子工业出版社', '2020-01-01', 39.80, 18, 'https://img2.doubanio.com/view/subject/l/public/s33952222.jpg', '经典教材，覆盖网络基础与协议。', 3, 2, 1, NOW(), NOW(), 0),
+  (2002, 1, '9787300000028', '数据结构', '严蔚敏', '清华大学出版社', '2019-06-01', 49.80, 13, 'https://img2.doubanio.com/view/subject/l/public/s2366821.jpg', '常用数据结构与算法入门。', 2, 2, 1, NOW(), NOW(), 0),
+  (2003, 1, '9787300000035', '操作系统', '汤小丹', '西安电子科技大学出版社', '2021-03-01', 59.00, 18, 'https://img9.doubanio.com/view/subject/l/public/s27242944.jpg', '操作系统原理与实践。', 4, 4, 1, NOW(), NOW(), 0),
+  (2004, 1, '9787300000042', 'Java 编程思想', 'Bruce Eckel', '机械工业出版社', '2018-08-01', 89.00, 18, 'https://img2.doubanio.com/view/subject/l/public/s27243452.jpg', 'Java 经典权威著作。', 2, 1, 1, NOW(), NOW(), 0);
 
 -- Inventory (status: 1=在馆, 2=借出)
 INSERT INTO lib_inventory (id, tenant_id, book_id, location, status, create_time, update_time, is_deleted)

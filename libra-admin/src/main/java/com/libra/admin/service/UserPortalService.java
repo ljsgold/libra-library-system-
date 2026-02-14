@@ -3,17 +3,21 @@ package com.libra.admin.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.libra.admin.domain.borrow.BorrowStatus;
 import com.libra.admin.entity.LibBook;
 import com.libra.admin.entity.LibBorrowRecord;
 import com.libra.admin.entity.LibInventory;
 import com.libra.admin.entity.LibReservation;
 import com.libra.admin.entity.SysUser;
+import com.libra.admin.entity.LibCategory;
 import com.libra.admin.mapper.LibBookMapper;
 import com.libra.admin.mapper.LibBorrowRecordMapper;
+import com.libra.admin.mapper.LibCategoryMapper;
 import com.libra.admin.mapper.LibInventoryMapper;
 import com.libra.admin.mapper.LibReservationMapper;
 import com.libra.admin.mapper.SysUserMapper;
 import com.libra.admin.vo.*;
+import com.libra.common.core.constant.ResultCode;
 import com.libra.common.exception.BusinessException;
 import com.libra.framework.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +52,9 @@ public class UserPortalService {
     @Autowired
     private LibBorrowService borrowService;
 
+    @Autowired
+    private LibCategoryMapper categoryMapper;
+
     private Long requireUserId() {
         Long userId = SecurityUtils.getUserId();
         if (userId == null) {
@@ -58,7 +65,8 @@ public class UserPortalService {
 
     private String categoryName(Long categoryId) {
         if (categoryId == null) return "未分类";
-        return "分类" + categoryId;
+        LibCategory category = categoryMapper.selectById(categoryId);
+        return category != null ? category.getCategoryName() : "未分类";
     }
 
     private BookItemVO toBookItem(LibBook book) {
@@ -101,8 +109,10 @@ public class UserPortalService {
     }
 
     public List<CategoryItemVO> getCategories() {
-        List<Long> ids = bookMapper.selectCategoryIds();
-        return ids.stream().map(id -> new CategoryItemVO(id, categoryName(id))).collect(Collectors.toList());
+        List<LibCategory> categories = categoryMapper.selectCategoriesWithBooks();
+        return categories.stream()
+                .map(c -> new CategoryItemVO(c.getId(), c.getCategoryName()))
+                .collect(Collectors.toList());
     }
 
     public PageResult<BookItemVO> searchBooks(String keyword, Long categoryId, Boolean onlyAvailable, String sort, int page, int size) {
@@ -233,10 +243,12 @@ public class UserPortalService {
             vo.setDueDate(r.getDueTime() == null ? null : r.getDueTime().toLocalDate().format(DATE_FORMAT));
             vo.setReturnDate(r.getReturnTime() == null ? null : r.getReturnTime().toLocalDate().format(DATE_FORMAT));
             if (current) {
-                vo.setStatus(r.getStatus() != null && r.getStatus() == 3 ? "OVERDUE" : "BORROWING");
-                vo.setRenewable(r.getStatus() != null && r.getStatus() == 1 && (r.getDueTime() == null || r.getDueTime().isAfter(now)));
+                BorrowStatus status = r.getBorrowStatus();
+                vo.setStatus(status == BorrowStatus.OVERDUE ? "OVERDUE" : "BORROWING");
+                vo.setRenewable(status == BorrowStatus.BORROWING && (r.getDueTime() == null || r.getDueTime().isAfter(now)));
             } else {
-                vo.setStatus(r.getStatus() != null && r.getStatus() == 4 ? "OVERDUE" : "RETURNED");
+                BorrowStatus status = r.getBorrowStatus();
+                vo.setStatus(status == BorrowStatus.COMPENSATED ? "OVERDUE" : "RETURNED");
                 vo.setRenewable(false);
             }
             result.add(vo);
@@ -248,9 +260,10 @@ public class UserPortalService {
         Long userId = requireUserId();
         LibBorrowRecord record = borrowRecordMapper.selectById(recordId);
         if (record == null || !Objects.equals(record.getUserId(), userId)) {
-            throw new BusinessException("借阅记录不存在");
+            throw new BusinessException(ResultCode.BORROW_RECORD_NOT_FOUND);
         }
-        if (record.getStatus() == null || record.getStatus() != 1) {
+        BorrowStatus status = record.getBorrowStatus();
+        if (status != BorrowStatus.BORROWING) {
             throw new BusinessException("借阅记录不可续借");
         }
         record.setDueTime(record.getDueTime().plusDays(30));
@@ -261,9 +274,9 @@ public class UserPortalService {
         Long userId = requireUserId();
         LibBorrowRecord record = borrowRecordMapper.selectById(recordId);
         if (record == null || !Objects.equals(record.getUserId(), userId)) {
-            throw new BusinessException("借阅记录不存在");
+            throw new BusinessException(ResultCode.BORROW_RECORD_NOT_FOUND);
         }
-        if (record.getStatus() == null || (record.getStatus() != 1 && record.getStatus() != 3)) {
+        if (!record.isBorrowingOrOverdue()) {
             throw new BusinessException("借阅记录不可归还");
         }
         borrowService.returnBook(record.getInventoryId());

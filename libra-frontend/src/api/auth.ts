@@ -39,6 +39,22 @@ export function loginByCode(payload: CodeLoginPayload) {
   return request.post('/auth/login/by-code', payload)
 }
 
+/**
+ * 获取微信登录跳转URL
+ */
+export function getWechatLoginUrl() {
+  return request.get<string>('/auth/wechat/url')
+}
+
+/**
+ * 微信回调登录
+ */
+export function wechatLogin(code: string) {
+  return request.post<any>('/auth/wechat/login', null, {
+    params: { code }
+  })
+}
+
 export function register(payload: RegisterPayload) {
   return request.post('/auth/register', payload)
 }

@@ -80,6 +80,22 @@
             没有账号？
             <el-link type="primary" :underline="false" @click="goRegister">去注册</el-link>
           </div>
+
+          <template v-if="wechatEnabled">
+            <div class="divider">
+              <span>其他登录方式</span>
+            </div>
+
+            <div class="social-login">
+              <el-button
+                class="wechat-btn"
+                circle
+                @click="handleWechatLogin"
+              >
+                <span>W</span>
+              </el-button>
+            </div>
+          </template>
         </el-form>
       </section>
     </div>
@@ -87,11 +103,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessage, FormInstance, FormRules } from 'element-plus'
+import { ElMessage, ElTooltip, FormInstance, FormRules } from 'element-plus'
 import { useUserStore } from '@/store/user'
-import { sendLoginCode } from '@/api/auth'
+import { sendLoginCode, getWechatLoginUrl } from '@/api/auth'
 
 const router = useRouter()
 const route = useRoute()
@@ -102,6 +118,48 @@ const submitting = ref(false)
 const sending = ref(false)
 const countdown = ref(0)
 const loginMode = ref<'password' | 'code'>('password')
+const wechatEnabled = ref(false)
+
+const handleWechatLogin = async () => {
+  try {
+    const url = await getWechatLoginUrl()
+    if (url) {
+      // 跳转到微信扫码登录页面
+      window.location.href = url
+    }
+  } catch (error) {
+    ElMessage.error('获取微信登录链接失败')
+  }
+}
+
+onMounted(async () => {
+  // 检查是否启用微信登录
+  try {
+    const url = await getWechatLoginUrl()
+    wechatEnabled.value = !!url
+  } catch (error) {
+    wechatEnabled.value = false
+  }
+  
+  // 检查 URL 中是否有 code (扫码回调)
+  const code = route.query.code as string
+  if (code) {
+    handleWechatCallback(code)
+  }
+})
+
+const handleWechatCallback = async (code: string) => {
+  submitting.value = true
+  try {
+    await userStore.wechatLogin(code)
+    ElMessage.success('微信登录成功')
+    router.push('/')
+  } catch (error: any) {
+    ElMessage.error(error.message || '微信登录失败')
+  } finally {
+    submitting.value = false
+  }
+}
 
 const form = reactive({
   username: (route.query.username as string) || '',
@@ -205,7 +263,8 @@ const goForgot = () => router.push({ path: '/forgot-password', query: { username
 
 .code-row {
   display: flex;
-  gap: 8px;
+  gap: 12px;
+  align-items: center;
 }
 
 .code-row :deep(.el-input) {
@@ -216,6 +275,12 @@ const goForgot = () => router.push({ path: '/forgot-password', query: { username
   flex-shrink: 0;
   white-space: nowrap;
   min-width: 112px;
+  height: 42px;
+}
+
+.code-row :deep(.el-input__wrapper) {
+  height: 42px;
+  box-sizing: border-box;
 }
 
 .form-actions {
@@ -223,5 +288,50 @@ const goForgot = () => router.push({ path: '/forgot-password', query: { username
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
+}
+
+.extra {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--el-text-color-regular);
+}
+
+.divider {
+  margin: 24px 0;
+  position: relative;
+  text-align: center;
+  border-bottom: 1px solid var(--el-border-color-lighter);
+}
+
+.divider span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0 12px;
+  background-color: #fff;
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+}
+
+.social-login {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.wechat-btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--el-border-color);
+  color: #07c160;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.wechat-btn:hover {
+  background-color: #f0fdf4;
+  border-color: #07c160;
 }
 </style>

@@ -219,7 +219,8 @@ const goLogin = () => router.push({ path: '/login', query: { username: form.user
 
 .code-row {
   display: flex;
-  gap: 8px;
+  gap: 12px;
+  align-items: center;
 }
 
 .code-row :deep(.el-input) {
@@ -230,5 +231,11 @@ const goLogin = () => router.push({ path: '/login', query: { username: form.user
   flex-shrink: 0;
   white-space: nowrap;
   min-width: 112px;
+  height: 42px;
+}
+
+.code-row :deep(.el-input__wrapper) {
+  height: 42px;
+  box-sizing: border-box;
 }
 </style>

@@ -1,0 +1,9 @@
+{
+  "name": "libra-project-runner",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix libra-frontend run dev",
+    "build:web": "npm --prefix libra-frontend run build",
+    "preview:web": "npm --prefix libra-frontend run preview"
+  }
+}
