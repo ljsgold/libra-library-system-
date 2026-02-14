@@ -1,5 +1,5 @@
-# 使用 JRE 17 作为基础镜像
-FROM openjdk:21-jdk-slim
+# 使用 Eclipse Temurin JDK 21 作为基础镜像（官方推荐）
+FROM eclipse-temurin:21-jdk-jammy
 
 # 设置工作目录
 WORKDIR /app
@@ -15,5 +15,5 @@ ENV JAVA_OPTS="-Xms512m -Xmx1024m"
 # 暴露端口
 EXPOSE 8080
 
-# 启动命令
-ENTRYPOINT ["bash", "-lc", "/wait-for-it.sh libra-db 3306 --timeout=60 --strict -- java $JAVA_OPTS -jar app.jar"]
+# 启动命令（Railway 不需要等待数据库，因为数据库是独立服务）
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
