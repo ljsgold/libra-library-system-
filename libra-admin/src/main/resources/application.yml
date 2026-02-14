@@ -58,6 +58,15 @@ wechat:
   # 前端登录页面会自动检测 code 参数并调用后端接口完成登录
   redirect-uri: http://localhost:5173/login  # 根据实际前端地址修改（开发环境通常是 5173，生产环境需要改为实际域名）
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized
+
 logging:
   level:
     com.libra: debug
