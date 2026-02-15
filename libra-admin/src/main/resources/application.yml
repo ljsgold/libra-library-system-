@@ -8,12 +8,23 @@ spring:
     # Change 'h2' to 'mysql' to use your local MySQL database
     active: mysql
 
-#  data:
-#    redis:
-#      host: localhost
-#      port: 6379
-#      password: 
-#      database: 0
+  # Redis 配置（可选）
+  # 如果配置了 SPRING_DATA_REDIS_HOST 环境变量，则启用 Redis
+  # 如果没有配置，应用会跳过 Redis 配置，不会尝试连接
+  data:
+    redis:
+      # 只有当 SPRING_DATA_REDIS_HOST 不为空时才配置 Redis
+      # 如果环境变量未设置或为空，Spring Boot 会自动跳过 Redis 自动配置
+      host: ${SPRING_DATA_REDIS_HOST:}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+      password: ${SPRING_DATA_REDIS_PASSWORD:}
+      database: ${SPRING_DATA_REDIS_DATABASE:0}
+      timeout: 3000
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
 
 mybatis-plus:
   mapper-locations: classpath*:mapper/**/*Mapper.xml

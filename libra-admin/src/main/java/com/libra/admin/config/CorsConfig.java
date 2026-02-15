@@ -33,8 +33,9 @@ public class CorsConfig {
             "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"
         ));
         
-        // 允许发送凭证（cookies等）
-        config.setAllowCredentials(true);
+        // 注意：当使用通配符 "*" 时，不能设置 allowCredentials 为 true
+        // 由于我们使用 JWT token（通过 Authorization header），不需要 cookies，所以设置为 false
+        config.setAllowCredentials(false);
         
         // 预检请求的缓存时间（秒）
         config.setMaxAge(3600L);

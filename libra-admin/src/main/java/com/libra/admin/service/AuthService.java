@@ -80,6 +80,7 @@ public class AuthService {
     }
 
     @Transactional
+    @SuppressWarnings("null")
     public Map<String, String> wechatLogin(String code) {
         // 检查微信配置是否启用
         String appid = wechatConfig.getAppid();
@@ -92,7 +93,7 @@ public class AuthService {
             throw new BusinessException("微信授权码不能为空");
         }
         // 1. 调用微信接口获取 openid
-        String url = String.format(WECHAT_TOKEN_URL, appid, secret, code);
+        String url = Objects.requireNonNull(String.format(WECHAT_TOKEN_URL, appid, secret, code));
         WechatTokenResponse response = restTemplate.getForObject(url, WechatTokenResponse.class);
         
         if (response == null) {
