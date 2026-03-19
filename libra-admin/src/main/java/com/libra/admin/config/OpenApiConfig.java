@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @OpenAPIDefinition(
         info = @Info(
                 title = "图书管理系统 API",
-                version = "1.0.0",
+                version = "4.0.0",
                 description = "图书管理系统后端接口"
         )
 )

@@ -27,42 +27,41 @@
             <el-empty description="暂无借阅" />
           </div>
           <div v-else>
-            <el-table :data="currentList" size="small" class="borrow-table" border>
-              <el-table-column prop="bookTitle" label="书名" min-width="180" show-overflow-tooltip />
-              <el-table-column prop="author" label="作者" min-width="100" show-overflow-tooltip />
-              <el-table-column prop="borrowDate" label="借出日期" width="120" />
-              <el-table-column prop="dueDate" label="应还日期" width="120" />
-              <el-table-column label="状态" width="90" align="center">
+            <el-table :data="currentList" class="borrow-table borrow-table--clean">
+              <el-table-column prop="bookTitle" label="书名" min-width="200" show-overflow-tooltip />
+              <el-table-column prop="author" label="作者" min-width="110" show-overflow-tooltip />
+              <el-table-column prop="borrowDate" label="借出日期" width="128" align="center" />
+              <el-table-column prop="dueDate" label="应还日期" width="128" align="center" />
+              <el-table-column label="状态" width="100" align="center">
                 <template #default="scope">
-                  <el-tag
-                    :type="scope.row.status === 'OVERDUE' ? 'danger' : 'success'"
-                    size="small"
-                  >
+                  <span class="status-badge" :class="scope.row.status === 'OVERDUE' ? 'status-overdue' : 'status-ongoing'">
                     {{ scope.row.status === 'OVERDUE' ? '逾期' : '借阅中' }}
-                  </el-tag>
+                  </span>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" width="140" align="center">
+              <el-table-column label="操作" width="200" align="center" class-name="col-actions">
                 <template #default="scope">
-                  <el-button
-                    type="primary"
-                    link
-                    size="small"
-                    :loading="returningId === scope.row.id"
-                    @click="handleReturn(scope.row.id)"
-                  >
-                    归还
-                  </el-button>
-                  <el-button
-                    v-if="scope.row.renewable"
-                    type="primary"
-                    link
-                    size="small"
-                    :loading="renewingId === scope.row.id"
-                    @click="handleRenew(scope.row.id)"
-                  >
-                    续借
-                  </el-button>
+                  <div class="action-btns">
+                    <el-button
+                      type="primary"
+                      size="small"
+                      class="btn-action"
+                      :loading="returningId === scope.row.id"
+                      @click="handleReturn(scope.row.id)"
+                    >
+                      归还
+                    </el-button>
+                    <el-button
+                      v-if="scope.row.renewable"
+                      type="default"
+                      size="small"
+                      class="btn-action btn-secondary"
+                      :loading="renewingId === scope.row.id"
+                      @click="handleRenew(scope.row.id)"
+                    >
+                      续借
+                    </el-button>
+                  </div>
                 </template>
               </el-table-column>
             </el-table>
@@ -77,20 +76,15 @@
             <el-empty description="暂无历史记录" />
           </div>
           <div v-else>
-            <el-table :data="historyList" size="small" class="borrow-table" border>
-              <el-table-column prop="bookTitle" label="书名" min-width="180" show-overflow-tooltip />
-              <el-table-column prop="author" label="作者" min-width="100" show-overflow-tooltip />
-              <el-table-column prop="borrowDate" label="借出日期" width="120" />
-              <el-table-column prop="dueDate" label="应还日期" width="120" />
-              <el-table-column prop="returnDate" label="归还日期" width="120" />
+            <el-table :data="historyList" class="borrow-table borrow-table--clean">
+              <el-table-column prop="bookTitle" label="书名" min-width="200" show-overflow-tooltip />
+              <el-table-column prop="author" label="作者" min-width="110" show-overflow-tooltip />
+              <el-table-column prop="borrowDate" label="借出日期" width="128" align="center" />
+              <el-table-column prop="dueDate" label="应还日期" width="128" align="center" />
+              <el-table-column prop="returnDate" label="归还日期" width="128" align="center" />
               <el-table-column label="状态" width="100" align="center">
                 <template #default="scope">
-                  <el-tag
-                    :type="scope.row.status === 'OVERDUE' ? 'danger' : 'success'"
-                    size="small"
-                  >
-                    {{ scope.row.status === 'OVERDUE' ? '逾期' : '已归还' }}
-                  </el-tag>
+                  <span class="status-badge status-returned">{{ scope.row.status === 'OVERDUE' ? '逾期' : '已归还' }}</span>
                 </template>
               </el-table-column>
             </el-table>
@@ -105,44 +99,42 @@
             <el-empty description="暂无预约" />
           </div>
           <div v-else>
-            <el-table :data="reservationList" size="small" class="borrow-table" border>
-              <el-table-column prop="bookTitle" label="书名" min-width="180" show-overflow-tooltip />
-              <el-table-column prop="author" label="作者" min-width="100" show-overflow-tooltip />
-              <el-table-column prop="queueNo" label="排队号" width="90" />
-              <el-table-column prop="expectedDate" label="预计到馆" width="120" />
-              <el-table-column prop="pickupDeadline" label="取书截止" width="140" />
+            <el-table :data="reservationList" class="borrow-table borrow-table--clean">
+              <el-table-column prop="bookTitle" label="书名" min-width="200" show-overflow-tooltip />
+              <el-table-column prop="author" label="作者" min-width="110" show-overflow-tooltip />
+              <el-table-column prop="queueNo" label="排队号" width="90" align="center" />
+              <el-table-column prop="expectedDate" label="预计到馆" width="120" align="center" />
+              <el-table-column prop="pickupDeadline" label="取书截止" width="120" align="center" />
               <el-table-column label="状态" width="110" align="center">
                 <template #default="scope">
-                  <el-tag
-                    :type="scope.row.status === 'NOTIFIED' ? 'success' : scope.row.status === 'CANCELLED' ? 'info' : 'warning'"
-                    size="small"
-                  >
+                  <span class="status-badge" :class="'status-' + (scope.row.status === 'NOTIFIED' ? 'notified' : scope.row.status === 'CANCELLED' ? 'cancelled' : 'waiting')">
                     {{ statusText(scope.row.status) }}
-                  </el-tag>
+                  </span>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" width="140" align="center">
+              <el-table-column label="操作" width="200" align="center" class-name="col-actions">
                 <template #default="scope">
-                  <div class="actions">
-                    <el-button
-                      v-if="scope.row.status === 'WAITING' || scope.row.status === 'NOTIFIED'"
-                      type="danger"
-                      link
-                      size="small"
-                      :loading="cancellingId === scope.row.id"
-                      @click="handleCancel(scope.row.id)"
-                    >
-                      取消
-                    </el-button>
+                  <div class="action-btns">
                     <el-button
                       v-if="scope.row.status === 'WAITING' && !scope.row.notified"
                       type="primary"
-                      link
                       size="small"
+                      class="btn-action"
                       :loading="subscribingId === scope.row.id"
                       @click="handleSubscribe(scope.row.id)"
                     >
                       到书提醒
+                    </el-button>
+                    <el-button
+                      v-if="scope.row.status === 'WAITING' || scope.row.status === 'NOTIFIED'"
+                      type="danger"
+                      plain
+                      size="small"
+                      class="btn-action"
+                      :loading="cancellingId === scope.row.id"
+                      @click="handleCancel(scope.row.id)"
+                    >
+                      取消预约
                     </el-button>
                   </div>
                 </template>
@@ -308,7 +300,6 @@ onMounted(() => {
 
 .borrow-page :deep(.el-card:hover) {
   box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
 }
 
 .page-header {
@@ -413,28 +404,116 @@ onMounted(() => {
 
 .borrow-table {
   width: 100%;
-  margin-top: 16px;
+  margin-top: 20px;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-  --el-table-border-color: rgba(0, 0, 0, 0.05);
-  --el-table-header-bg-color: rgba(249, 250, 251, 0.8);
+  --el-table-border-color: transparent;
+  --el-table-header-bg-color: transparent;
 }
 
-.borrow-table :deep(th.el-table__cell) {
-  background-color: rgba(249, 250, 251, 0.8);
-  font-weight: 600;
+/* 无外边框、行分隔线更柔和 */
+.borrow-table--clean :deep(.el-table__inner-wrapper::before),
+.borrow-table--clean :deep(.el-table::before) {
+  display: none;
+}
+
+.borrow-table--clean :deep(.el-table__header th.el-table__cell) {
+  background: linear-gradient(180deg, rgba(249, 250, 251, 0.95) 0%, rgba(249, 250, 251, 0.85) 100%);
+  font-weight: 700;
+  font-size: 13px;
   color: var(--color-text-secondary);
-  height: 48px;
+  letter-spacing: 0.02em;
+  height: 52px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
-.actions {
-  display: flex;
-  gap: 8px;
+.borrow-table--clean :deep(.el-table__body td.el-table__cell) {
+  padding: 14px 16px;
+  font-size: 14px;
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border-light);
+  transition: background 0.2s ease;
+}
+
+.borrow-table--clean :deep(.el-table__body tr:hover td.el-table__cell) {
+  background: rgba(var(--color-primary-rgb), 0.04);
+}
+
+.borrow-table--clean :deep(.el-table__body tr:last-child td.el-table__cell) {
+  border-bottom: none;
+}
+
+/* 操作列统一高度、按钮始终单行 */
+.borrow-table--clean :deep(td.col-actions) {
+  vertical-align: middle;
+  min-height: 56px;
+}
+
+.action-btns {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  gap: 10px;
   justify-content: center;
+  align-items: center;
+  min-height: 36px;
 }
 
-.actions .el-button {
+.action-btns .btn-action {
   font-weight: 600;
+  border-radius: 10px;
+  min-width: 76px;
+  margin: 0;
+}
+
+.action-btns .btn-secondary {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.action-btns .btn-secondary:hover:not(:disabled) {
+  border-color: var(--color-primary-light);
+  color: var(--color-primary-soft-text);
+  background: var(--color-primary-soft-bg);
+}
+
+/* 状态标签：统一圆角胶囊，不用 el-tag 避免高低不一 */
+.status-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-ongoing {
+  background: rgba(5, 150, 105, 0.12);
+  color: #059669;
+}
+
+.status-overdue {
+  background: rgba(220, 38, 38, 0.12);
+  color: #dc2626;
+}
+
+.status-returned {
+  background: rgba(var(--color-primary-rgb), 0.1);
+  color: var(--color-primary);
+}
+
+.status-waiting {
+  background: rgba(255, 149, 0, 0.12);
+  color: #e68600;
+}
+
+.status-notified {
+  background: rgba(5, 150, 105, 0.12);
+  color: #059669;
+}
+
+.status-cancelled {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--color-text-secondary);
 }
 </style>

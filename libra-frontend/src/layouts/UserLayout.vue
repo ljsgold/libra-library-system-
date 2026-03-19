@@ -58,7 +58,7 @@
                   <span>个人中心</span>
                 </span>
               </el-dropdown-item>
-              <el-dropdown-item command="logout" divided>
+              <el-dropdown-item command="logout" divided class="danger">
                 <span class="dropdown-item-content danger">
                   <el-icon class="dropdown-item-icon"><SwitchButton /></el-icon>
                   <span>退出登录</span>
@@ -137,26 +137,26 @@ onMounted(() => {
 
 .user-header {
   position: sticky;
-  top: 20px;
+  top: 16px;
   z-index: 100;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  padding: 14px 24px;
-  margin: 20px auto 0;
-  width: calc(100% - 64px);
+  padding: 12px 24px;
+  margin: 16px auto 0;
+  width: calc(100% - 48px);
   max-width: var(--container-max);
   gap: 32px;
-  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(30px) saturate(180%);
-  -webkit-backdrop-filter: blur(30px) saturate(180%);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.06);
+  transition: all var(--transition-slow);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-md);
 }
 
 .user-header:hover {
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.04), 0 6px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-lg);
 }
 
 .brand {
@@ -169,23 +169,22 @@ onMounted(() => {
 }
 
 .brand-logo {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
-  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-soft-bg);
+  color: var(--color-primary-soft-text);
   font-weight: 700;
-  font-size: 22px;
+  font-size: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(var(--color-primary-rgb), 0.25);
-  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
 }
 
 .brand:hover .brand-logo {
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(var(--color-primary-rgb), 0.3);
+  box-shadow: var(--shadow-md);
 }
 
 .brand-text {
@@ -222,38 +221,39 @@ onMounted(() => {
 }
 
 .nav :deep(.el-menu-item) {
-  border-radius: 12px;
+  border-radius: 10px;
   margin: 0 4px;
-  padding: 0 14px;
-  height: 42px;
-  line-height: 42px;
+  padding: 0 18px;
+  height: 40px;
+  line-height: 40px;
   font-size: 14px;
   font-weight: 600;
   color: var(--color-text-secondary);
   border-bottom: none !important;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: all 0.25s ease;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .nav-icon {
-  font-size: 16px;
-  color: var(--color-text-secondary);
+  font-size: 18px;
+  color: inherit;
 }
 
 .nav :deep(.el-menu-item:hover) {
-  background: rgba(15, 23, 42, 0.04);
-  color: var(--color-text);
+  background: var(--color-primary-soft-bg);
+  color: var(--color-primary-soft-text);
 }
 
 .nav :deep(.el-menu-item.is-active) {
-  background: rgba(15, 23, 42, 0.06) !important;
-  color: var(--color-text) !important;
+  background: var(--color-primary-soft-bg) !important;
+  color: var(--color-primary-soft-text) !important;
+  box-shadow: var(--shadow-sm);
 }
 
 .nav :deep(.el-menu-item.is-active .nav-icon) {
-  color: var(--color-text);
+  color: var(--color-primary-soft-text);
 }
 
 .user-actions {
@@ -267,17 +267,17 @@ onMounted(() => {
   align-items: center;
   gap: 12px;
   cursor: pointer;
-  padding: 6px 12px 6px 6px;
+  padding: 8px 14px 8px 8px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.9);
   border: 1px solid var(--color-border-light);
-  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition: all 0.25s ease;
+  min-height: 48px;
 }
 
 .user-trigger:hover {
   background: rgba(255, 255, 255, 0.95);
   box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
 }
 
 .avatar {
@@ -372,10 +372,30 @@ onMounted(() => {
 .dropdown-item-content {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  padding: 2px 0;
+  font-weight: 500;
 }
 
 .dropdown-item-icon {
-  font-size: 16px;
+  font-size: 18px;
+  color: var(--color-text-secondary);
+}
+
+.custom-dropdown :deep(.el-dropdown-menu__item) {
+  padding: 10px 16px;
+  font-size: 14px;
+  border-radius: 8px;
+  margin: 2px 6px;
+}
+
+.custom-dropdown :deep(.el-dropdown-menu__item:hover) {
+  background: rgba(0, 122, 255, 0.08);
+  color: var(--color-primary);
+}
+
+.custom-dropdown :deep(.el-dropdown-menu__item.danger:hover) {
+  background: rgba(255, 59, 48, 0.08);
+  color: var(--color-danger);
 }
 </style>

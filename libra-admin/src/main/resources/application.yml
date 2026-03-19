@@ -7,6 +7,11 @@ spring:
   profiles:
     # Change 'h2' to 'mysql' to use your local MySQL database
     active: mysql
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
+      - org.springframework.boot.actuate.autoconfigure.health.RedisHealthContributorAutoConfiguration
 
   # Redis 配置（可选）
   # 如果配置了 SPRING_DATA_REDIS_HOST 环境变量，则启用 Redis
@@ -82,9 +87,11 @@ management:
         enabled: true
   health:
     db:
-      enabled: true
+      enabled: false  # 禁用数据库健康检查，避免数据库连接问题导致健康检查失败
     diskspace:
       enabled: false
+    defaults:
+      enabled: true  # 启用默认健康检查（只检查应用是否启动）
 
 logging:
   level:

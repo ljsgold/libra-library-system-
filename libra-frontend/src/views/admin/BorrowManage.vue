@@ -164,7 +164,6 @@ onMounted(() => {
 
 .borrow-manage-page :deep(.el-card:hover) {
   box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
 }
 
 .page-header {

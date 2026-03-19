@@ -135,7 +135,6 @@ onMounted(() => {
 }
 
 .stat-card:hover {
-  transform: translateY(-1px);
   box-shadow: var(--shadow-md);
   border-color: rgba(var(--color-primary-rgb), 0.18);
 }

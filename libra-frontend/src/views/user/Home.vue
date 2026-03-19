@@ -69,9 +69,9 @@
             <h2 class="section-title">新书上架</h2>
             <p class="section-subtitle">最新到馆的精选图书</p>
           </div>
-          <el-button type="primary" plain @click="goBooks('new')" class="section-cta">
-            查看全部
-            <el-icon><ArrowRight /></el-icon>
+          <el-button type="primary" class="section-cta section-cta--solid" @click="goBooks('new')">
+            <span class="section-cta-text">查看全部</span>
+            <el-icon class="section-cta-icon"><ArrowRight /></el-icon>
           </el-button>
         </div>
 
@@ -109,6 +109,10 @@
             <h2 class="section-title">热门借阅</h2>
             <p class="section-subtitle">最受读者欢迎的图书</p>
           </div>
+          <el-button type="primary" plain class="section-cta section-cta--plain" @click="goBooks('popular')">
+            <span class="section-cta-text">查看全部</span>
+            <el-icon class="section-cta-icon"><ArrowRight /></el-icon>
+          </el-button>
         </div>
 
         <div v-if="loadingPopular" class="loading-state">
@@ -306,10 +310,11 @@ const handleSearch = () => {
 }
 
 const goBooks = (tag?: string) => {
-  router.push({
-    path: '/u/books',
-    query: { tag }
-  })
+  const query: Record<string, string> = {}
+  if (tag === 'popular') query.sort = 'popular'
+  else if (tag === 'new') query.sort = 'latest'
+  else if (tag) query.tag = tag
+  router.push({ path: '/u/books', query })
 }
 
 const goBooksByCategory = (categoryId: number) => {
@@ -766,7 +771,6 @@ onMounted(() => {
 }
 
 .stat-item:hover {
-  transform: translateY(-2px);
   box-shadow: var(--shadow-md);
   border-color: rgba(var(--color-primary-rgb), 0.15);
 }
@@ -800,29 +804,100 @@ onMounted(() => {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 32px;
+  gap: 24px;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
 }
 
 .section-title {
-  font-size: 40px;
-  font-weight: 700;
-  letter-spacing: -0.003em;
-  margin: 0 0 12px;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0 0 8px;
   color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-title::before {
+  content: '';
+  width: 4px;
+  height: 28px;
+  background: var(--color-primary);
+  border-radius: 2px;
+  flex-shrink: 0;
 }
 
 .section-subtitle {
-  font-size: 19px;
+  font-size: 15px;
   color: var(--color-text-secondary);
   margin: 0;
-  font-weight: 400;
-  letter-spacing: -0.022em;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  padding-left: 16px;
 }
 
 .section-cta {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  padding: 0 24px;
+  height: 44px;
+  min-width: 120px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.section-cta-text {
+  color: inherit;
+  line-height: 1;
+}
+
+.section-cta-icon {
+  font-size: 16px;
+  color: inherit;
+}
+
+/* 描边按钮：保证文字和图标始终可见 */
+.section-cta--plain {
+  border-width: 1.5px !important;
+  border-color: var(--color-primary-light) !important;
+  color: var(--color-primary-soft-text) !important;
+  background: var(--color-surface) !important;
+}
+
+.section-cta--plain .section-cta-text,
+.section-cta--plain .section-cta-icon {
+  color: var(--color-primary-soft-text) !important;
+}
+
+.section-cta--plain:hover {
+  border-color: var(--color-primary-soft-text) !important;
+  background: var(--color-primary-soft-bg) !important;
+}
+
+.section-cta--plain:hover .section-cta-text,
+.section-cta--plain:hover .section-cta-icon {
+  color: var(--color-primary-soft-text) !important;
+}
+
+/* 实心主按钮：淡蓝底 + 深蓝字，与「X本可借」一致 */
+.section-cta--solid {
+  background: var(--color-primary-soft-bg) !important;
+  border-color: transparent !important;
+}
+
+.section-cta--solid .section-cta-text,
+.section-cta--solid .section-cta-icon {
+  color: var(--color-primary-soft-text) !important;
+}
+
+.section-cta--solid:hover {
+  background: var(--color-primary-soft-bg-hover) !important;
 }
 
 .book-grid {
@@ -842,7 +917,6 @@ onMounted(() => {
 }
 
 .book-card:hover {
-  transform: translateY(-4px) scale(1.01);
   box-shadow: var(--shadow-lg);
   border-color: rgba(var(--color-primary-rgb), 0.2);
 }
@@ -885,8 +959,8 @@ onMounted(() => {
 }
 
 .book-status.available {
-  background: rgba(52, 199, 89, 0.12);
-  color: #248A3D;
+  background: var(--color-primary-soft-bg);
+  color: var(--color-primary-soft-text);
 }
 
 .popular-list {
@@ -909,7 +983,6 @@ onMounted(() => {
 
 .popular-item:hover {
   box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
 }
 
 .popular-rank {
@@ -960,9 +1033,9 @@ onMounted(() => {
   font-size: 12px;
   font-weight: 600;
   padding: 6px 12px;
-  border-radius: 8px;
-  background: rgba(var(--color-primary-rgb), 0.1);
-  color: var(--color-primary);
+  border-radius: var(--radius-md);
+  background: var(--color-primary-soft-bg);
+  color: var(--color-primary-soft-text);
 }
 
 .category-grid {
@@ -986,7 +1059,6 @@ onMounted(() => {
 }
 
 .category-card:hover {
-  transform: translateY(-6px) scale(1.02);
   box-shadow: var(--shadow-xl);
   border-color: rgba(var(--color-primary-rgb), 0.25);
 }

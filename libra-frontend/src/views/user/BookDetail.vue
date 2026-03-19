@@ -40,12 +40,26 @@
             <div class="actions">
               <el-button
                 type="primary"
+                size="large"
+                class="btn-borrow"
                 :disabled="!detail.canBorrow || borrowing"
+                :loading="borrowing"
                 @click="handleBorrow"
               >
-                借阅
+                <el-icon><Document /></el-icon>
+                <span>立即借阅</span>
               </el-button>
-              <el-button :disabled="reserving" @click="handleReserve">预约</el-button>
+              <el-button
+                type="default"
+                size="large"
+                class="btn-reserve"
+                :disabled="reserving"
+                :loading="reserving"
+                @click="handleReserve"
+              >
+                <el-icon><AlarmClock /></el-icon>
+                <span>预约</span>
+              </el-button>
             </div>
           </div>
         </div>
@@ -75,6 +89,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { AlarmClock, Document } from '@element-plus/icons-vue'
 import type { BookDetail, BorrowRuleItem } from '@/api/user'
 import { borrowBook, getBookDetail, getBorrowRules, reserveBook } from '@/api/user'
 import { ElMessage } from 'element-plus'
@@ -198,12 +213,11 @@ onMounted(() => {
   border: 1px solid var(--color-border-light);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
-  transition: box-shadow 200ms ease, transform 200ms ease;
+  transition: box-shadow 200ms ease;
 }
 
 .detail-page :deep(.el-card:hover) {
   box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
 }
 
 .page-header {
@@ -328,18 +342,39 @@ onMounted(() => {
 }
 
 .actions {
-  margin-top: 8px;
+  margin-top: 12px;
   display: flex;
-  gap: 16px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .actions .el-button {
   height: 44px;
   border-radius: 12px;
-  padding: 0 32px;
+  padding: 0 24px;
   font-weight: 600;
   font-size: 15px;
-  box-shadow: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 120px;
+  justify-content: center;
+}
+
+.btn-borrow .el-icon,
+.btn-reserve .el-icon {
+  font-size: 18px;
+}
+
+.btn-reserve {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.btn-reserve:hover:not(:disabled) {
+  border-color: var(--color-primary-light);
+  color: var(--color-primary-soft-text);
+  background: var(--color-primary-soft-bg);
 }
 
 .section {

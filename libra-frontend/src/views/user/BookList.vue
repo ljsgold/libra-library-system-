@@ -51,7 +51,10 @@
         <el-checkbox v-model="query.onlyAvailable" class="filter-item">
           仅显示可借
         </el-checkbox>
-        <el-button type="primary" @click="handleSearch">搜索</el-button>
+        <el-button type="primary" class="btn-search" @click="handleSearch">
+          <el-icon class="btn-icon"><Search /></el-icon>
+          <span>搜索</span>
+        </el-button>
       </div>
 
       <div class="helper-bar" v-if="recentKeywords.length">
@@ -102,10 +105,11 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="90" align="center">
+          <el-table-column label="操作" width="120" align="center">
             <template #default="scope">
-              <el-button type="primary" link size="small" @click="goDetail(scope.row.id)">
-                详情
+              <el-button type="primary" size="small" class="btn-detail" @click="goDetail(scope.row.id)">
+                <el-icon><View /></el-icon>
+                <span>查看详情</span>
               </el-button>
             </template>
           </el-table-column>
@@ -129,6 +133,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { Search, View } from '@element-plus/icons-vue'
 import type { BookItem, CategoryItem } from '@/api/user'
 import { getCategories, searchBooks } from '@/api/user'
 import { ElMessage } from 'element-plus'
@@ -347,7 +352,7 @@ onMounted(() => {
   display: block;
   width: 4px;
   height: 18px;
-  background: var(--color-primary);
+  background: var(--color-primary-soft-text);
   border-radius: 2px;
 }
 
@@ -412,9 +417,9 @@ onMounted(() => {
 }
 
 .chips .el-tag:hover {
-  transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  color: var(--color-primary);
+  color: var(--color-primary-soft-text);
+  background: var(--color-primary-soft-bg) !important;
 }
 
 .table-loading,
@@ -470,5 +475,39 @@ onMounted(() => {
 
 .filter-bar .el-button {
   height: 40px;
+}
+
+.btn-search {
+  padding: 0 20px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-search .btn-icon {
+  font-size: 16px;
+}
+
+.btn-detail {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 6px 12px;
+}
+
+.book-table :deep(.btn-detail .el-icon) {
+  font-size: 14px;
+}
+
+/* 表格行悬停：弱化整行高亮，仅保留轻微背景与过渡 */
+.book-table :deep(.el-table__body tr:hover > td.el-table__cell) {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+  transition: background-color 0.15s ease;
+}
+.book-table :deep(.el-table__body tr > td.el-table__cell) {
+  transition: background-color 0.15s ease;
 }
 </style>
