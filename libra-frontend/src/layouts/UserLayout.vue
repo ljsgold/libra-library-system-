@@ -169,22 +169,46 @@ onMounted(() => {
 }
 
 .brand-logo {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: var(--radius-md);
-  background: var(--color-primary-soft-bg);
-  color: var(--color-primary-soft-text);
+  background: var(--gradient-primary);
+  color: #FFFFFF;
   font-weight: 700;
-  font-size: 20px;
+  font-size: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4), 0 0 30px rgba(59, 130, 246, 0.2);
   transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.brand-logo::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 60%
+  );
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
 }
 
 .brand:hover .brand-logo {
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5), 0 0 40px rgba(59, 130, 246, 0.3);
+  transform: scale(1.05);
 }
 
 .brand-text {
@@ -230,30 +254,59 @@ onMounted(() => {
   font-weight: 600;
   color: var(--color-text-secondary);
   border-bottom: none !important;
-  transition: all 0.25s ease;
+  transition: all var(--transition-normal);
   display: flex;
   align-items: center;
   gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav :deep(.el-menu-item)::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--gradient-primary);
+  transition: width var(--transition-normal);
+  border-radius: 2px 2px 0 0;
+  box-shadow: 0 0 10px var(--color-primary-glow);
 }
 
 .nav-icon {
   font-size: 18px;
   color: inherit;
+  transition: all var(--transition-normal);
 }
 
 .nav :deep(.el-menu-item:hover) {
-  background: var(--color-primary-soft-bg);
-  color: var(--color-primary-soft-text);
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--color-primary-light);
+}
+
+.nav :deep(.el-menu-item:hover::before) {
+  width: 60%;
+}
+
+.nav :deep(.el-menu-item:hover .nav-icon) {
+  color: var(--color-primary);
 }
 
 .nav :deep(.el-menu-item.is-active) {
-  background: var(--color-primary-soft-bg) !important;
-  color: var(--color-primary-soft-text) !important;
-  box-shadow: var(--shadow-sm);
+  background: rgba(59, 130, 246, 0.15) !important;
+  color: var(--color-primary) !important;
+  box-shadow: none;
+}
+
+.nav :deep(.el-menu-item.is-active::before) {
+  width: 80%;
 }
 
 .nav :deep(.el-menu-item.is-active .nav-icon) {
-  color: var(--color-primary-soft-text);
+  color: var(--color-primary);
 }
 
 .user-actions {
@@ -269,29 +322,31 @@ onMounted(() => {
   cursor: pointer;
   padding: 8px 14px 8px 8px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid var(--color-border-light);
-  transition: all 0.25s ease;
+  background: var(--glass-bg);
+  border: var(--glow-border);
+  backdrop-filter: blur(10px);
+  transition: all var(--transition-normal);
   min-height: 48px;
 }
 
 .user-trigger:hover {
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: var(--shadow-md);
+  border: var(--glow-border-hover);
+  box-shadow: var(--glow-shadow);
+  background: rgba(30, 41, 59, 0.8);
 }
 
 .avatar {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: rgba(15, 23, 42, 0.12);
+  background: var(--gradient-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-text);
+  color: #FFFFFF;
   font-weight: 700;
   font-size: 15px;
-  box-shadow: none;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
 }
 
 .user-meta {

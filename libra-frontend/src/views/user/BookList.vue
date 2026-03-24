@@ -287,16 +287,18 @@ onMounted(() => {
 }
 
 .book-list-page :deep(.el-card) {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border-light);
+  background: var(--glass-bg);
+  border: var(--glow-border);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 200ms ease, transform 200ms ease;
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(var(--glass-blur));
+  transition: all var(--transition-normal);
 }
 
-.book-list-page :deep(.el-card:hover) {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
+.book-list-page :deep(.el-card__header) {
+  border-bottom: 1px solid var(--color-border);
+  padding: 20px 24px;
+  background: rgba(15, 23, 42, 0.5);
 }
 
 .page-header {
@@ -310,10 +312,15 @@ onMounted(() => {
   font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.15em;
   color: var(--color-primary);
   margin-bottom: 8px;
   display: block;
+  padding: 6px 12px;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: var(--radius-full);
+  width: fit-content;
 }
 
 .page-title {
@@ -322,6 +329,7 @@ onMounted(() => {
   font-weight: 800;
   letter-spacing: -0.03em;
   color: var(--color-text);
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .page-subtitle {
@@ -352,8 +360,9 @@ onMounted(() => {
   display: block;
   width: 4px;
   height: 18px;
-  background: var(--color-primary-soft-text);
+  background: var(--gradient-primary);
   border-radius: 2px;
+  box-shadow: 0 0 10px var(--color-primary-glow);
 }
 
 .card-subtitle {
@@ -389,8 +398,9 @@ onMounted(() => {
   gap: 12px;
   flex-wrap: wrap;
   padding: 12px 16px;
-  background: rgba(15, 23, 42, 0.03);
-  border-radius: 12px;
+  background: rgba(59, 130, 246, 0.05);
+  border: var(--glow-border);
+  border-radius: var(--radius-md);
 }
 
 .helper-title {
@@ -408,18 +418,19 @@ onMounted(() => {
 }
 
 .chips .el-tag {
-  border-radius: 8px;
+  border-radius: var(--radius-full);
   cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-  background: #ffffff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: all var(--transition-fast);
+  border: var(--glow-border);
+  background: var(--glass-bg);
+  color: var(--color-text-secondary);
 }
 
 .chips .el-tag:hover {
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  color: var(--color-primary-soft-text);
-  background: var(--color-primary-soft-bg) !important;
+  border-color: var(--color-primary);
+  color: var(--color-primary-light);
+  background: rgba(59, 130, 246, 0.1);
+  box-shadow: var(--glow-shadow);
 }
 
 .table-loading,
@@ -428,42 +439,45 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.65);
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-lg);
 }
 
 .book-table {
   margin-top: 8px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-  --el-table-border-color: rgba(0, 0, 0, 0.05);
-  --el-table-header-bg-color: rgba(249, 250, 251, 0.8);
 }
 
 .book-table :deep(th.el-table__cell) {
-  background-color: rgba(249, 250, 251, 0.8);
+  background-color: rgba(15, 23, 42, 0.95);
   font-weight: 600;
-  color: var(--color-text-secondary);
+  color: var(--color-text);
   height: 48px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 12px;
 }
 
 .can-borrow {
-  color: #059669;
+  color: var(--color-neon);
   font-weight: 600;
-  background: rgba(5, 150, 105, 0.1);
+  background: rgba(34, 197, 94, 0.15);
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 12px;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.1);
 }
 
 .cannot-borrow {
-  color: #dc2626;
+  color: #EF4444;
   font-weight: 600;
-  background: rgba(220, 38, 38, 0.1);
+  background: rgba(239, 68, 68, 0.15);
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 12px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 .pager {
@@ -483,6 +497,12 @@ onMounted(() => {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  background: var(--gradient-primary) !important;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.btn-search:hover {
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4), 0 0 40px rgba(59, 130, 246, 0.2);
 }
 
 .btn-search .btn-icon {
@@ -494,20 +514,34 @@ onMounted(() => {
   align-items: center;
   gap: 6px;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 6px 12px;
+  border: var(--glow-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+}
+
+.btn-detail:hover {
+  border: var(--glow-border-hover);
+  box-shadow: var(--glow-shadow);
+  background: rgba(59, 130, 246, 0.1);
 }
 
 .book-table :deep(.btn-detail .el-icon) {
   font-size: 14px;
 }
 
-/* 表格行悬停：弱化整行高亮，仅保留轻微背景与过渡 */
 .book-table :deep(.el-table__body tr:hover > td.el-table__cell) {
-  background-color: rgba(0, 0, 0, 0.02) !important;
-  transition: background-color 0.15s ease;
+  background-color: rgba(59, 130, 246, 0.08) !important;
+  transition: background-color var(--transition-fast);
 }
+
 .book-table :deep(.el-table__body tr > td.el-table__cell) {
-  transition: background-color 0.15s ease;
+  transition: background-color var(--transition-fast);
+}
+
+.book-table :deep(.el-image__inner) {
+  border-radius: 6px;
+  box-shadow: var(--shadow-sm);
 }
 </style>

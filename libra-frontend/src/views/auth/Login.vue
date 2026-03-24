@@ -258,7 +258,8 @@ const goForgot = () => router.push({ path: '/forgot-password', query: { username
 }
 
 .auth-tabs :deep(.el-tabs__active-bar) {
-  background: var(--color-primary);
+  background: var(--gradient-primary);
+  box-shadow: 0 0 10px var(--color-primary-glow);
 }
 
 .code-row {
@@ -276,6 +277,8 @@ const goForgot = () => router.push({ path: '/forgot-password', query: { username
   white-space: nowrap;
   min-width: 112px;
   height: 42px;
+  background: var(--gradient-primary) !important;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3) !important;
 }
 
 .code-row :deep(.el-input__wrapper) {
@@ -290,18 +293,22 @@ const goForgot = () => router.push({ path: '/forgot-password', query: { username
   margin-bottom: 12px;
 }
 
+.form-actions :deep(.el-checkbox__label) {
+  color: var(--color-text-secondary);
+}
+
 .extra {
   margin-top: 24px;
   text-align: center;
   font-size: 14px;
-  color: var(--el-text-color-regular);
+  color: var(--color-text-secondary);
 }
 
 .divider {
   margin: 24px 0;
   position: relative;
   text-align: center;
-  border-bottom: 1px solid var(--el-border-color-lighter);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .divider span {
@@ -310,9 +317,9 @@ const goForgot = () => router.push({ path: '/forgot-password', query: { username
   left: 50%;
   transform: translate(-50%, -50%);
   padding: 0 12px;
-  background-color: #fff;
+  background: var(--glass-bg);
+  color: var(--color-text-secondary);
   font-size: 12px;
-  color: var(--el-text-color-secondary);
 }
 
 .social-login {
@@ -324,14 +331,17 @@ const goForgot = () => router.push({ path: '/forgot-password', query: { username
 .wechat-btn {
   width: 40px;
   height: 40px;
-  border: 1px solid var(--el-border-color);
-  color: #07c160;
+  border: var(--glow-border) !important;
+  color: var(--color-neon);
   font-size: 20px;
   font-weight: bold;
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(10px);
 }
 
 .wechat-btn:hover {
-  background-color: #f0fdf4;
-  border-color: #07c160;
+  border-color: var(--color-neon) !important;
+  box-shadow: 0 0 15px var(--color-neon-glow);
+  background: rgba(34, 197, 94, 0.1) !important;
 }
 </style>

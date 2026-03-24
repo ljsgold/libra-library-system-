@@ -1,0 +1,98 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: libra-bms
+  profiles:
+    # Change 'h2' to 'mysql' to use your local MySQL database
+    active: mysql
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
+      - org.springframework.boot.actuate.autoconfigure.health.RedisHealthContributorAutoConfiguration
+
+  # Redis 配置（可选）
+  # 如果配置了 SPRING_DATA_REDIS_HOST 环境变量，则启用 Redis
+  # 如果没有配置，应用会跳过 Redis 配置，不会尝试连接
+  data:
+    redis:
+      # 只有当 SPRING_DATA_REDIS_HOST 不为空时才配置 Redis
+      # 如果环境变量未设置或为空，Spring Boot 会自动跳过 Redis 自动配置
+      host: ${SPRING_DATA_REDIS_HOST:}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+      password: ${SPRING_DATA_REDIS_PASSWORD:}
+      database: ${SPRING_DATA_REDIS_DATABASE:0}
+      timeout: 3000
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  type-aliases-package: com.libra.admin.entity
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      logic-delete-field: is_deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+springdoc:
+  packages-to-scan: com.libra.admin.controller
+  swagger-ui:
+    path: /swagger-ui.html
+
+jwt:
+  secret: libra-bms-secret-key-libra-bms-secret-key-libra-bms
+  expiration: 86400
+
+wechat:
+  # ===== 微信登录配置（可选功能）=====
+  # 
+  # 【重要说明】个人开发者解决方案：
+  # 1. 微信开放平台的网站应用确实需要企业资质认证，个人开发者无法直接使用
+  # 2. 但个人开发者可以通过以下方式获得 AppID：
+  #    - 使用企业/个体户营业执照注册微信开放平台账号（推荐）
+  #    - 申请微信开放平台测试号（仅用于开发测试，不能用于生产环境）
+  #    - 使用微信公众平台的网页授权（需要公众号，功能不同）
+  # 
+  # 如果不需要微信登录功能，保持 appid 为 your_appid 即可，前端会自动隐藏微信登录按钮
+  # 
+  # 如需启用微信登录，请按以下步骤配置：
+  # 1. 访问 https://open.weixin.qq.com/ 注册账号（企业/个体户/测试号）
+  # 2. 创建网站应用并获取 AppID 和 AppSecret
+  # 3. 在微信开放平台配置授权回调域名（例如：localhost 或你的域名）
+  # 4. 填写以下信息（redirect-uri 必须是前端登录页面的完整URL）
+  appid: your_appid  # 保持为 your_appid 表示未启用微信登录
+  secret: your_secret
+  # 注意：redirect-uri 必须指向前端登录页面，微信回调会带 code 参数
+  # 前端登录页面会自动检测 code 参数并调用后端接口完成登录
+  redirect-uri: http://localhost:5173/login  # 根据实际前端地址修改（开发环境通常是 5173，生产环境需要改为实际域名）
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  health:
+    db:
+      enabled: false  # 禁用数据库健康检查，避免数据库连接问题导致健康检查失败
+    diskspace:
+      enabled: false
+    defaults:
+      enabled: true  # 启用默认健康检查（只检查应用是否启动）
+
+logging:
+  level:
+    com.libra: debug
